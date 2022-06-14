@@ -1,0 +1,37 @@
+version: "3"
+services:
+  mysql-service:
+    image: mysql
+    container_name: mysql_db
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: trip_diary
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - trip_diary
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      DB_URL: jdbc:mysql://mysql_db:3306/trip_diary?allowPublicKeyRetrieval=true&useSSL=false
+      DB_USER: user
+      DB_PASSWORD: password
+    depends_on:
+      - mysql-service
+    networks:
+      - trip_diary
+volumes:
+  db_data:
+networks:
+  trip_diary:
