@@ -21,6 +21,7 @@ import com.packandgo.tripdiary.service.EmailSenderService;
 import com.packandgo.tripdiary.service.PasswordResetService;
 import com.packandgo.tripdiary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +45,9 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailSenderService emailSenderService;
     private final PasswordResetService passwordResetService;
+
+    @Value("${tripdiary.baseurl.backend}")
+    private String backendUrl;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
@@ -133,7 +137,7 @@ public class UserServiceImpl implements UserService {
         userInfo.setGender(Gender.UNDEFINED);
 
         //create verify email
-        MailContent mailContent = new VerifyEmailMailContent(user.getEmail(), user.getVerifyToken());
+        MailContent mailContent = new VerifyEmailMailContent(user.getEmail(), user.getVerifyToken(), backendUrl);
         emailSenderService.sendEmail(mailContent);
         userRepository.save(user);
         userInfoRepository.save(userInfo);

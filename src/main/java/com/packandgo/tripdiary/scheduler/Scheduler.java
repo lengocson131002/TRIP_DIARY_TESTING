@@ -8,6 +8,7 @@ import com.packandgo.tripdiary.service.TripService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,9 @@ public class Scheduler {
     private static Logger logger = LoggerFactory.getLogger(Scheduler.class);
     private final TripService tripService;
     private final EmailSenderService emailSenderService;
+
+    @Value("${tripdiary.baseurl.frontend}")
+    private String frontendUrl;
 
     @Autowired
     public Scheduler(TripService tripService,
@@ -39,7 +43,7 @@ public class Scheduler {
         if(notifiedTrip.size() > 0) {
             //sent Email
             for(Trip trip: notifiedTrip) {
-                MailContent mailContent = new NotificationMailContent(trip);
+                MailContent mailContent = new NotificationMailContent(trip, frontendUrl);
                 ScheduledTask task = new SendNotificationMailTask(emailSenderService, mailContent);
                 task.doTask();
 

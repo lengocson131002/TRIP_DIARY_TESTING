@@ -1,5 +1,8 @@
 package com.packandgo.tripdiary.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -15,6 +18,7 @@ public class PasswordResetToken {
 
     @OneToOne
     @JoinColumn(nullable = false, name = "user_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     private Date expiryDate;

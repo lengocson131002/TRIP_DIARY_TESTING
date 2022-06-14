@@ -5,6 +5,7 @@ import com.packandgo.tripdiary.constants.BaseUrl;
 import com.packandgo.tripdiary.model.User;
 import com.packandgo.tripdiary.model.mail.MailContent;
 import com.packandgo.tripdiary.model.mail.ResetPasswordMailContent;
+import com.packandgo.tripdiary.model.mail.VerifyEmailMailContent;
 import com.packandgo.tripdiary.payload.request.auth.LoginRequest;
 import com.packandgo.tripdiary.payload.request.auth.PasswordResetRequest;
 import com.packandgo.tripdiary.payload.request.auth.NewPasswordRequest;
@@ -40,6 +41,11 @@ public class AuthController {
     private final EmailSenderService emailSenderService;
     private final PasswordResetService passwordResetService;
 
+    @Value("${tripdiary.baseurl.frontend}")
+    private String frontendUrl;
+
+    @Value("${tripdiary.baseurl.backend}")
+    private String backendUrl;
     @Autowired
     public AuthController(AuthenticationManager authenticationManager,
                           UserService userService,
@@ -118,7 +124,7 @@ public class AuthController {
 
         //sendEmail
         //create reset password email;
-        MailContent mailContent = new ResetPasswordMailContent(user.getEmail(), token);
+        MailContent mailContent = new ResetPasswordMailContent(user.getEmail(), token, frontendUrl);
         emailSenderService.sendEmail(mailContent);
 
         return ResponseEntity.ok(new MessageResponse("Request to reset password sent. Check your email for detail"));
@@ -137,9 +143,9 @@ public class AuthController {
     public ResponseEntity<?> verify(@PathParam("token") String token) {
         boolean isValidToken = userService.verify(token);
         if (isValidToken) {
-            return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(BaseUrl.FRONT_END + "/login")).build();
+            return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(frontendUrl + "/login")).build();
         } else {
-            return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(BaseUrl.FRONT_END + "/invalid-verify-code")).build();
+            return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(frontendUrl + "/invalid-verify-code")).build();
         }
     }
 }
