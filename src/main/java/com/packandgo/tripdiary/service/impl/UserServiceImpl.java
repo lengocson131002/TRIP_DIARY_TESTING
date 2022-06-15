@@ -246,7 +246,14 @@ public class UserServiceImpl implements UserService {
 
         userInfo.setDateOfBirth(infoUpdateRequest.getDateOfBirth());
         userInfo.setAboutMe(infoUpdateRequest.getAboutMe());
-        userInfoRepository.save(userInfo);
+
+       try {
+           userInfoRepository.save(userInfo);
+       } catch (Exception ex) {
+           throw new IllegalArgumentException("Can't update user info. Try again");
+       }
+
+
     }
 
     @Override
@@ -256,7 +263,12 @@ public class UserServiceImpl implements UserService {
         Page<UserResponse> resultUserResponse = resultUser.map(user -> {
 
            UserResponse response =  new UserResponse();
+           UserInfo info = getInfo(user);
            response.setUsername(user.getUsername());
+           response.setAboutMe(info.getAboutMe());
+           response.setCountry(info.getCountry());
+           response.setCoverImageUrl(info.getCoverImageUrl());
+           response.setProfileImageUrl(info.getProfileImageUrl());
            response.setTrips(user.getTrips());
            return  response;
         });
