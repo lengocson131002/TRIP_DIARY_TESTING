@@ -71,7 +71,7 @@ public class ProfileController {
 
         userService.updateUserInfo(user, infoUpdateRequest);
 
-        return ResponseEntity.ok(new MessageResponse("Update successfully"));
+        return ResponseEntity.ok(new MessageResponse("User information updated successfully"));
     }
 
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})

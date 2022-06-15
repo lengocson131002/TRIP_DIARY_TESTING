@@ -23,7 +23,6 @@ public interface UserService {
     public void resetPassword(NewPasswordRequest request);
     public UserInfo getInfo(User user);
 
-
     public void updateUserInfo(User user, InfoUpdateRequest infoUpdateRequest);
     public Page<UserResponse> getUsersAndAllTrips(int page, int size);
 }

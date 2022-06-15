@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("DELETE FROM User u where u.username = ?1")
     public void removeUserByUsername(String username);
 
-    @Query(value = "SELECT user FROM User user JOIN user.trips")
+    @Query(value = "SELECT DISTINCT user FROM User user LEFT OUTER JOIN user.trips")
     Page<User> findUsersAndAllTrips(Pageable pageable);
 
 }
