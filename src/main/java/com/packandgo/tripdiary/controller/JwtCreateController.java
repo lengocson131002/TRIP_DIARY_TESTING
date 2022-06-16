@@ -79,7 +79,7 @@ public class JwtCreateController {
 
         userRepository.save(user);
 
-        String jwtToken = jwtUtils.generateJwtTokenFromUsername(userInfo.getName());
+        String jwtToken = jwtUtils.generateJwtTokenFromUsername(user.getUsername());
 
         JwtResponse response = new JwtResponse(
                 jwtToken,
