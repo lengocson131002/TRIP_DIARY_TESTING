@@ -13,7 +13,6 @@ public abstract class TripPayload {
     private String thumbnailUrl;
     private Destination destination;
     private String name;
-
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date beginDate;
 

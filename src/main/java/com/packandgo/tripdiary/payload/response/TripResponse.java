@@ -4,6 +4,9 @@ import com.packandgo.tripdiary.payload.TripPayload;
 
 public class TripResponse extends TripPayload {
     private long id;
+
+    private String username;
+
     private int numOfLikes;
 //    private int List<Comment> comment;
 
@@ -21,5 +24,13 @@ public class TripResponse extends TripPayload {
 
     public void setNumOfLikes(int numOfLikes) {
         this.numOfLikes = numOfLikes;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

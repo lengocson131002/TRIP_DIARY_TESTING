@@ -179,6 +179,7 @@ public class Trip {
         tripResponse.setPriceList(this.getPriceList());
         tripResponse.setNotifyBefore(this.getNotifyBefore());
         tripResponse.setNumOfLikes(0);
+        tripResponse.setUsername(this.user.getUsername());
         return tripResponse;
     }
 

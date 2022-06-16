@@ -14,6 +14,7 @@ public class VisitPlace {
     @JsonIgnore
     private Long id;
 
+    private String address;
     private double longitude;
     private double latitude;
 
@@ -98,5 +99,13 @@ public class VisitPlace {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

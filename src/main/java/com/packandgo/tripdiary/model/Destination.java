@@ -12,6 +12,16 @@ public class Destination {
     @JsonIgnore
     private Long id;
 
+    private String address;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     private double longitude;
     private double latitude;
 

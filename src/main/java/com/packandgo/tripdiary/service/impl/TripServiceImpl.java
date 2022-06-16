@@ -59,6 +59,7 @@ public class TripServiceImpl implements TripService {
                 () -> new UsernameNotFoundException("Unauthorized user")
         );
 
+
         if (request.getNotifyBefore() < 1) {
             throw new IllegalArgumentException("Trip should be announced at least 1 day earlier than its starting");
         }
