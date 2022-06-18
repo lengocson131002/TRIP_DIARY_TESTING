@@ -40,8 +40,6 @@ public class UserServiceImpl implements UserService {
     private final EmailSenderService emailSenderService;
     private final PasswordResetService passwordResetService;
 
-    @Value("${tripdiary.baseurl.backend}")
-    private String backendUrl;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
