@@ -44,7 +44,7 @@ public class TripServiceImpl implements TripService {
 
     @Override
     @Transactional
-    public void insertTrip(TripRequest request) {
+    public Trip insertTrip(TripRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("Trip information is required");
         }
@@ -77,7 +77,8 @@ public class TripServiceImpl implements TripService {
         newTrip.mapping(request);
         newTrip.setUser(user);
 
-        tripRepository.save(newTrip);
+        Trip savedTrip = tripRepository.save(newTrip);
+        return savedTrip;
     }
 
     @Override
@@ -112,7 +113,7 @@ public class TripServiceImpl implements TripService {
 
     @Override
     @Transactional
-    public void updateTrip(Long tripId, TripRequest request) {
+    public Trip updateTrip(Long tripId, TripRequest request) {
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder
                 .getContext()
@@ -143,7 +144,8 @@ public class TripServiceImpl implements TripService {
 
         trip.mapping(request);
 
-        tripRepository.save(trip);
+        Trip savedTrip = tripRepository.save(trip);
+        return savedTrip;
     }
 
     @Override

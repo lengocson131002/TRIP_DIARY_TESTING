@@ -36,7 +36,6 @@ public class TripController {
     }
 
 
-
     @GetMapping("")
     public ResponseEntity<?> getAllTrips(@RequestParam(defaultValue = "1", required = false) int page,
                                          @RequestParam(defaultValue = "10", required = false) int size) {
@@ -49,8 +48,9 @@ public class TripController {
 
     @PostMapping("")
     public ResponseEntity<?> insertTrip(@RequestBody TripRequest tripRequest) {
-        tripService.insertTrip(tripRequest);
-        return ResponseEntity.ok(new MessageResponse("Trip was inserted successfully"));
+        Trip savedTrip = tripService.insertTrip(tripRequest);
+        TripResponse tripResponse = savedTrip.toResponse();
+        return ResponseEntity.ok(tripResponse);
     }
 
     @DeleteMapping("/{id}")
@@ -62,17 +62,18 @@ public class TripController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTrip(@PathVariable(name = "id", required = true) Long tripId,
                                         @RequestBody TripRequest request) {
-        tripService.updateTrip(tripId, request);
-        return ResponseEntity.ok(new MessageResponse("Trip was updated successfully"));
+
+        Trip savedTrip = tripService.updateTrip(tripId, request);
+        TripResponse tripResponse = savedTrip.toResponse();
+        return ResponseEntity.ok(tripResponse);
     }
 
     @PostMapping("/like/{id}")
 
-    public ResponseEntity<?> likeTrip(@PathVariable(name = "id", required = true) Long tripId){
-            tripService.likeTrip(tripId);
-            return ResponseEntity.ok(new MessageResponse("OK"));
+    public ResponseEntity<?> likeTrip(@PathVariable(name = "id", required = true) Long tripId) {
+        tripService.likeTrip(tripId);
+        return ResponseEntity.ok(new MessageResponse("OK"));
     }
-
 
 
 }
