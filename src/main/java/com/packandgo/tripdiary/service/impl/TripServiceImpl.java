@@ -1,17 +1,19 @@
 package com.packandgo.tripdiary.service.impl;
 
-import com.packandgo.tripdiary.enums.Transportation;
-import com.packandgo.tripdiary.enums.TripStatus;
 import com.packandgo.tripdiary.model.Like;
 import com.packandgo.tripdiary.model.Trip;
 import com.packandgo.tripdiary.model.User;
+import com.packandgo.tripdiary.model.mail.InviteJoinTripContent;
+import com.packandgo.tripdiary.model.mail.MailContent;
 import com.packandgo.tripdiary.payload.request.trip.TripRequest;
 import com.packandgo.tripdiary.repository.DestinationRepository;
 import com.packandgo.tripdiary.repository.LikeRepository;
 import com.packandgo.tripdiary.repository.TripRepository;
 import com.packandgo.tripdiary.repository.UserRepository;
+import com.packandgo.tripdiary.service.EmailSenderService;
 import com.packandgo.tripdiary.service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,10 +23,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -33,13 +32,22 @@ public class TripServiceImpl implements TripService {
     private final UserRepository userRepository;
     private final DestinationRepository destinationRepository;
     private final LikeRepository likeRepository;
+    private final EmailSenderService mailService;
+
+    @Value("${tripdiary.baseurl.frontend}")
+    private String frontendUrl;
 
     @Autowired
-    public TripServiceImpl(TripRepository tripRepository, UserRepository userRepository, DestinationRepository destinationRepository, LikeRepository likeRepository) {
+    public TripServiceImpl(TripRepository tripRepository,
+                           UserRepository userRepository,
+                           DestinationRepository destinationRepository,
+                           LikeRepository likeRepository,
+                           EmailSenderService mailService) {
         this.tripRepository = tripRepository;
         this.userRepository = userRepository;
         this.destinationRepository = destinationRepository;
         this.likeRepository = likeRepository;
+        this.mailService = mailService;
     }
 
     @Override
@@ -239,7 +247,8 @@ public class TripServiceImpl implements TripService {
             throw new IllegalArgumentException(username + " was invited to join this trip before");
         }
 
-
+        MailContent invitationMail = new InviteJoinTripContent(existedTrip, invitedUser, frontendUrl);
+        mailService.sendEmail(invitationMail);
         existedTrip.addUser(invitedUser);
         tripRepository.save(existedTrip);
 

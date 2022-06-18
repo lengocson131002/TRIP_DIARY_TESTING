@@ -4,14 +4,14 @@ import com.packandgo.tripdiary.model.Trip;
 import com.packandgo.tripdiary.model.User;
 import org.thymeleaf.context.Context;
 
-public class InviteJoinTrip extends MailContent {
+public class InviteJoinTripContent extends MailContent {
 
     private Trip trip;
     private User joiner;
     private String frontendUrl;
     private final String INVITE_JOIN_TRIP_EMAIL_LOCATION = "notification-trip";
 
-    public InviteJoinTrip(Trip trip, User joiner, String frontendUrl) {
+    public InviteJoinTripContent(Trip trip, User joiner, String frontendUrl) {
         this.trip = trip;
         this.joiner = joiner;
         this.frontendUrl = frontendUrl;
