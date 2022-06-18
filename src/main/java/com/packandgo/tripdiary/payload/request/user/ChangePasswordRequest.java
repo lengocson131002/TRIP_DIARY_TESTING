@@ -2,30 +2,30 @@ package com.packandgo.tripdiary.payload.request.user;
 
 public class ChangePasswordRequest {
 
-    private String currentPassword;
-    private String newPassword;
+    private String password;
+    private String confirmPassword;
 
     public ChangePasswordRequest() {
     }
 
-    public ChangePasswordRequest(String currentPassword, String newPassword) {
-        this.currentPassword = currentPassword;
-        this.newPassword = newPassword;
+    public ChangePasswordRequest(String password, String confirmPassword) {
+        this.password = password;
+        this.confirmPassword = confirmPassword;
     }
 
-    public String getCurrentPassword() {
-        return currentPassword;
+    public String getPassword() {
+        return password;
     }
 
-    public void setCurrentPassword(String currentPassword) {
-        this.currentPassword = currentPassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getNewPassword() {
-        return newPassword;
+    public String getConfirmPassword() {
+        return confirmPassword;
     }
 
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 }

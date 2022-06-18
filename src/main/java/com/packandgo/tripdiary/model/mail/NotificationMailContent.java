@@ -2,6 +2,7 @@ package com.packandgo.tripdiary.model.mail;
 
 import com.packandgo.tripdiary.constants.BaseUrl;
 import com.packandgo.tripdiary.model.Trip;
+import com.packandgo.tripdiary.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.thymeleaf.context.Context;
 
@@ -14,8 +15,8 @@ public class NotificationMailContent extends  MailContent{
     private String frontendUrl;
     private final String TRIP_NOTIFICATION_EMAIL_LOCATION = "notification-trip";
     private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-    public NotificationMailContent( Trip trip, String frontendUrl) {
-        this.toEmail = trip.getUser().getEmail();
+    public NotificationMailContent(Trip trip, User user, String frontendUrl) {
+        this.toEmail = user.getEmail();
         this.trip = trip;
         this.frontendUrl = frontendUrl;
         this.subject = "TRIP NOTIFICATION ";

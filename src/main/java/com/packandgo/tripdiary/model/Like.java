@@ -20,7 +20,7 @@ public class Like {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     @JoinColumn(name = "trip_id",referencedColumnName = "id", nullable = false)
     @JsonIgnore
     private Trip trip;

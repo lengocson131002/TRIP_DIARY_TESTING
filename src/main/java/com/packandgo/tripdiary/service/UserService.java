@@ -1,5 +1,6 @@
 package com.packandgo.tripdiary.service;
 
+import com.packandgo.tripdiary.model.Trip;
 import com.packandgo.tripdiary.model.User;
 import com.packandgo.tripdiary.model.UserInfo;
 import com.packandgo.tripdiary.payload.request.auth.NewPasswordRequest;
@@ -7,6 +8,8 @@ import com.packandgo.tripdiary.payload.request.auth.RegisterRequest;
 import com.packandgo.tripdiary.payload.request.user.InfoUpdateRequest;
 import com.packandgo.tripdiary.payload.response.UserResponse;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface UserService {
     public User findUserByEmail(String email);
@@ -24,5 +27,6 @@ public interface UserService {
     public UserInfo getInfo(User user);
 
     public void updateUserInfo(User user, InfoUpdateRequest infoUpdateRequest);
+    public List<Trip> getTripsForUser(User user);
     public Page<UserResponse> getUsersAndAllTrips(int page, int size);
 }

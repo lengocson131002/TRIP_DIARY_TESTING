@@ -3,10 +3,7 @@ package com.packandgo.tripdiary.service.impl;
 import com.packandgo.tripdiary.enums.Gender;
 import com.packandgo.tripdiary.enums.UserStatus;
 import com.packandgo.tripdiary.exception.UserNotFoundException;
-import com.packandgo.tripdiary.model.PasswordResetToken;
-import com.packandgo.tripdiary.model.Role;
-import com.packandgo.tripdiary.model.User;
-import com.packandgo.tripdiary.model.UserInfo;
+import com.packandgo.tripdiary.model.*;
 import com.packandgo.tripdiary.model.mail.MailContent;
 import com.packandgo.tripdiary.model.mail.VerifyEmailMailContent;
 import com.packandgo.tripdiary.payload.request.auth.NewPasswordRequest;
@@ -30,10 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -254,6 +248,12 @@ public class UserServiceImpl implements UserService {
        }
 
 
+    }
+    
+    @Override
+    public List<Trip> getTripsForUser(User user) {
+        List<Trip> trips = userRepository.findsTripByUserId(user.getId());
+        return trips;
     }
 
     @Override

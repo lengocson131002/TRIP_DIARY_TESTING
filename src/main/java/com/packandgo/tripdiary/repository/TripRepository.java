@@ -14,7 +14,7 @@ import java.util.List;
 public interface TripRepository extends PagingAndSortingRepository<Trip, Long> {
     Page<Trip> findAll(Pageable pageable);
 
-    @Query("SELECT t FROM Trip t WHERE t.user.id = ?1")
+    @Query("SELECT t FROM Trip t WHERE t.owner.id = ?1")
     List<Trip> findByUserId(Long id);
     @Query(value = "SELECT * FROM trip t WHERE t.begin_date = current_date() + t.notify_before", nativeQuery = true)
     List<Trip> getTripsForToday();

@@ -34,10 +34,14 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    @OneToMany(
+    @ManyToMany(
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "user")
+            fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_trip",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "trip_id") }
+    )
     private List<Trip> trips = new ArrayList<>();
 
     @ManyToMany(
@@ -106,7 +110,7 @@ public class User {
         if(this.trips == null) {
             trips = new ArrayList<>();
         }
-        trips.stream().forEach(trip -> trip.setUser(this));
+        trips.stream().forEach(trip -> trip.setOwner(this.getUsername()));
         this.trips = trips;
     }
 
@@ -131,7 +135,14 @@ public class User {
             trips = new ArrayList<>();
         }
         this.trips.add(trip);
-        trip.setUser(this);
+        trip.setOwner(this.username);
+    }
+
+    public void removeTrip(Trip trip) {
+        if(!this.trips.isEmpty()) {
+            this.trips.remove(trip);
+            trip.getUsers().remove(this);
+        }
     }
 
     public Set<Role> getRoles() {

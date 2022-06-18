@@ -75,8 +75,8 @@ public class TripServiceImpl implements TripService {
 
         Trip newTrip = new Trip();
         newTrip.mapping(request);
-        newTrip.setUser(user);
-
+        newTrip.setOwner(user.getUsername());
+        newTrip.addUser(user);
         Trip savedTrip = tripRepository.save(newTrip);
         return savedTrip;
     }
@@ -102,7 +102,7 @@ public class TripServiceImpl implements TripService {
                 .getPrincipal();
 
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
-        List<Trip> trips = getTripsForUser(user);
+        List<Trip> trips = userRepository.findsTripByUserId(user.getId());
 
         Trip existedTrip = trips.stream().filter(trip -> trip.getId() == id).findAny().orElseThrow(
                 () -> new IllegalArgumentException("You have no permission to delete this trip")
@@ -121,7 +121,7 @@ public class TripServiceImpl implements TripService {
                 .getPrincipal();
 
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
-        List<Trip> trips = getTripsForUser(user);
+        List<Trip> trips = userRepository.findsTripByUserId(user.getId());
 
         Trip trip = trips.stream().filter(t -> t.getId() == tripId).findAny().orElseThrow(
                 () -> new IllegalArgumentException("You have no permission to update this trip")
@@ -157,18 +157,12 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
-    public List<Trip> getTripsForUser(User user) {
-        List<Trip> trips = tripRepository.findByUserId(user.getId());
-        return trips;
-    }
-
-    @Override
     public boolean existedTrip(Long tripId) {
         return tripRepository.existsById(tripId);
     }
 
 
-    public void likeTrip(Long tripId){
+    public void likeTrip(Long tripId) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
@@ -178,7 +172,7 @@ public class TripServiceImpl implements TripService {
 
 
         Trip trip = tripRepository.findById(tripId).orElseThrow(
-                () ->  new IllegalArgumentException("Trip with ID \"" + tripId + "\" doesn't exist")
+                () -> new IllegalArgumentException("Trip with ID \"" + tripId + "\" doesn't exist")
         );
         if (likeRepository.existsByTripIdAndUserId(trip.getId(), user.getId()) == false) {
             Like like = new Like();
@@ -192,7 +186,7 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
-    public boolean existedLike(Long tripId){
+    public boolean existedLike(Long tripId) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
@@ -202,7 +196,7 @@ public class TripServiceImpl implements TripService {
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         Trip trip = tripRepository.findById(tripId).orElseThrow(
-                () ->  new IllegalArgumentException("Trip with ID \"" + tripId + "\" doesn't exist")
+                () -> new IllegalArgumentException("Trip with ID \"" + tripId + "\" doesn't exist")
         );
         return likeRepository.existsByTripIdAndUserId(trip.getId(), user.getId());
     }
@@ -210,6 +204,92 @@ public class TripServiceImpl implements TripService {
     @Override
     public List<Trip> getNotifiedTripsForDay() {
         return tripRepository.getTripsForToday();
+    }
+
+    @Override
+    public void inviteToJoinTrip(Long tripId, String username) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        User user = userRepository.findByUsername(userDetails.getUsername()).get();
+        List<Trip> trips = userRepository.findsTripByUserId(user.getId());
+
+        //check whether the user can access this trip
+        trips.stream().filter(t -> t.getId() == tripId).findAny().orElseThrow(
+                () -> new IllegalArgumentException("You have no permission to invite trip mate for this trip")
+        );
+
+        //check whether this trip with this trip is exists or not
+        Trip existedTrip = tripRepository.findById(tripId).orElseThrow(
+                () -> new IllegalArgumentException("Trip with ID \"" + tripId + "\" doesn't exist")
+        );
+
+        //check whether username exist or not
+        User invitedUser = userRepository.findByUsernameOrEmail(username, username).orElseThrow(
+                () -> new IllegalArgumentException("User with username or email \"" + username + "\" doesn't exist")
+        );
+
+        if (existedTrip.getOwner().equals(invitedUser.getUsername()) ) {
+            throw new IllegalArgumentException(username + " is this trip's owner");
+        }
+
+        if(hasUser(existedTrip, invitedUser)) {
+            throw new IllegalArgumentException(username + " was invited to join this trip before");
+        }
+
+
+        existedTrip.addUser(invitedUser);
+        tripRepository.save(existedTrip);
+
+    }
+
+    @Override
+    public void removeTripMate(Long tripId, String username) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        User user = userRepository.findByUsername(userDetails.getUsername()).get();
+        List<Trip> trips = userRepository.findsTripByUserId(user.getId());
+
+        //check whether the user can access this trip
+        trips.stream().filter(t -> t.getId() == tripId).findAny().orElseThrow(
+                () -> new IllegalArgumentException("You have no permission to invite trip mate for this trip")
+        );
+
+        //check whether this trip with this trip is exists or not
+        Trip existedTrip = tripRepository.findById(tripId).orElseThrow(
+                () -> new IllegalArgumentException("Trip with ID \"" + tripId + "\" doesn't exist")
+        );
+
+        //check whether username exist or not
+        User invitedUser = userRepository.findByUsernameOrEmail(username, username).orElseThrow(
+                () -> new IllegalArgumentException("User with username or email \"" + username + "\" doesn't exist")
+        );
+
+        if (existedTrip.getOwner().equals(invitedUser.getUsername()) ) {
+            throw new IllegalArgumentException(username + " is this trip's owner");
+        }
+
+
+        if(!hasUser(existedTrip, invitedUser)) {
+            throw new IllegalArgumentException(username + " was not invited to join this trip before");
+        }
+
+        existedTrip.removeUser(invitedUser);
+        tripRepository.save(existedTrip);
+    }
+
+    private boolean hasUser(Trip trip, User user) {
+        for (User u : trip.getUsers()) {
+            if (u.getUsername().equals(user.getUsername())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

@@ -50,11 +50,11 @@ public class ProfileController {
 
         User user = userService.findUserByUsername(userDetails.getUsername());
 
-        if (!passwordEncoder.matches(newPasswordRequest.getCurrentPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Current password is not correct");
+        if (!newPasswordRequest.getPassword().equals(newPasswordRequest.getConfirmPassword())) {
+            throw new IllegalArgumentException("Password and Confirm password don't match together");
         }
 
-        userService.changePassword(user, newPasswordRequest.getNewPassword());
+        userService.changePassword(user, newPasswordRequest.getPassword());
         return ResponseEntity.ok(new MessageResponse("Change password successfully"));
     }
 

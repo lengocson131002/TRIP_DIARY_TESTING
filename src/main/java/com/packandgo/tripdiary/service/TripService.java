@@ -14,11 +14,12 @@ public interface TripService {
     public void removeTrip(Long id);
     public Trip updateTrip(Long tripId, TripRequest request);
     public Trip get(Long id);
-    public List<Trip> getTripsForUser(User user);
     public void likeTrip(Long tripId);
     public boolean existedTrip(Long tripId);
     public boolean existedLike(Long tripId);
     public List<Trip> getNotifiedTripsForDay();
 
+    public void inviteToJoinTrip(Long tripId, String username);
 
+    public void removeTripMate(Long tripId, String username);
 }

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link rel="stylesheet" thref="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .container {
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .table {
+      border-collapse: collapse;
+      width: 600px;
+      border-radius: 10px;
+      border: 1px solid #dee2e6;
+      overflow: hidden;
+    }
+
+    .logo {
+      width: 200px;
+      height: auto;
+      object-fit: cover;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      width: fit-content;
+      display: inline-block;
+      padding: 10px 40px;
+      background: #3bc9db;
+      border-radius: 10px;
+      margin-top: 10px;
+      cursor: pointer;
+      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+      transition: all 0.2s ease-in-out;
+      color: #000;
+    }
+
+    .btn:hover {
+      background: #66d9e8;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <table align="center" class="table">
+    <tr>
+      <td style="
+                    background-color: #ffffff;
+                    padding:30px 40px;
+                     text-align: center;
+                     border-radius: 10px;
+                    ">
+        <div>
+          <img src="../static/logo-black-3.png" class="logo image-responsive"
+               th:src="'cid:logoImage'">
+        </div>
+        <h3>INVITE TO JOIN TRIP</h3>
+        <p th:text="${message}"></p>
+        <h3 th:text="${name}"></h3>
+        <p>To view more detail about this trip, follow the link: </p>
+        <h3><a class="btn btn-primary" th:href="@{${tripUrl}}">View trip</a></h3>
+      </td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

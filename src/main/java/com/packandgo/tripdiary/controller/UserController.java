@@ -28,7 +28,7 @@ public class UserController {
     public ResponseEntity<?> getUserWithAllTrips(@PathVariable(name = "username", required = true) String username) {
         User user = userService.findUserByUsername(username);
         UserInfo userInfo = userService.getInfo(user);
-        List<Trip> trips = tripService.getTripsForUser(user);
+        List<Trip> trips = userService.getTripsForUser(user);
 
         UserResponse userResponse = new UserResponse();
 

@@ -2,10 +2,20 @@ package com.packandgo.tripdiary.payload.response;
 
 import com.packandgo.tripdiary.payload.TripPayload;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TripResponse extends TripPayload {
     private long id;
 
-    private String username;
+    private String owner;
+
+    private List<String> tripMates;
+
+    public TripResponse() {
+        super();
+        tripMates = new ArrayList<>();
+    }
 
     private int numOfLikes;
 //    private int List<Comment> comment;
@@ -26,11 +36,19 @@ public class TripResponse extends TripPayload {
         this.numOfLikes = numOfLikes;
     }
 
-    public String getUsername() {
-        return username;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public List<String> getTripMates() {
+        return tripMates;
+    }
+
+    public void setTripMates(List<String> tripMates) {
+        this.tripMates = tripMates;
     }
 }
