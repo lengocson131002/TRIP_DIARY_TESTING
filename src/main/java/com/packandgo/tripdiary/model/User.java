@@ -1,5 +1,6 @@
 package com.packandgo.tripdiary.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.packandgo.tripdiary.enums.UserStatus;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -32,6 +33,7 @@ public class User {
 
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinTable(name = "user_trip", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "trip_id")})
+    @JsonIgnore
     private List<Trip> trips = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
