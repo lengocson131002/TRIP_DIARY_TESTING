@@ -67,7 +67,15 @@ public class Trip {
     @Column(name = "notify_before")
     private int notifyBefore;
 
-    @ManyToMany(mappedBy = "trips", cascade = CascadeType.ALL)
+    @ManyToMany(
+            mappedBy = "trips",
+            cascade =
+                    {
+                            CascadeType.DETACH,
+                            CascadeType.MERGE,
+                            CascadeType.REFRESH,
+                            CascadeType.PERSIST
+                    })
     @JsonIgnore
     private List<User> users;
 
@@ -76,7 +84,7 @@ public class Trip {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<VisitDay> visitDays = new ArrayList<>();
+    private List<VisitDay> visitDays;
 
     private String owner;
 
@@ -86,8 +94,7 @@ public class Trip {
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    private List<PriceItem> priceList = new ArrayList<>();
-
+    private List<PriceItem> priceList;
 
 
     public Trip() {
@@ -187,8 +194,8 @@ public class Trip {
         tripResponse.setNumOfLikes(0);
         tripResponse.setOwner(this.owner);
         this.users.forEach(user -> {
-            if(!user.getUsername().equals(owner))
-            tripResponse.getTripMates().add(user.getUsername());
+            if (!user.getUsername().equals(owner))
+                tripResponse.getTripMates().add(user.getUsername());
         });
         return tripResponse;
     }
@@ -352,7 +359,7 @@ public class Trip {
     }
 
     public void addUser(User user) {
-        if(this.getUsers() == null) {
+        if (this.getUsers() == null) {
             this.users = new ArrayList<>();
         }
         this.users.add(user);
@@ -360,10 +367,7 @@ public class Trip {
     }
 
     public void removeUser(User user) {
-        if(!this.users.isEmpty()) {
-            this.users.remove(user);
-            user.getTrips().remove(this);
-
-        }
+        this.users.remove(user);
+        user.getTrips().remove(this);
     }
 }

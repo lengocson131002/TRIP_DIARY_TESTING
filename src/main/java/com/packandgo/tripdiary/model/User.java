@@ -9,11 +9,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 @Entity
-@Table(name = "user",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "username"),
-                @UniqueConstraint(columnNames = "email")
-        })
+@Table(name = "user", uniqueConstraints = {@UniqueConstraint(columnNames = "username"), @UniqueConstraint(columnNames = "email")})
 
 public class User {
     @Id
@@ -34,29 +30,15 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    @ManyToMany(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_trip",
-            joinColumns = { @JoinColumn(name = "user_id") },
-            inverseJoinColumns = { @JoinColumn(name = "trip_id") }
-    )
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @JoinTable(name = "user_trip", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "trip_id")})
     private List<Trip> trips = new ArrayList<>();
 
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL
-    )
-    @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
     private List<Like> likes = new ArrayList<>();
 
     public User() {
@@ -107,7 +89,7 @@ public class User {
     }
 
     public void setTrips(List<Trip> trips) {
-        if(this.trips == null) {
+        if (this.trips == null) {
             trips = new ArrayList<>();
         }
         trips.stream().forEach(trip -> trip.setOwner(this.getUsername()));
@@ -131,7 +113,7 @@ public class User {
     }
 
     public void addTrip(Trip trip) {
-        if(this.trips == null) {
+        if (this.trips == null) {
             trips = new ArrayList<>();
         }
         this.trips.add(trip);
@@ -139,7 +121,7 @@ public class User {
     }
 
     public void removeTrip(Trip trip) {
-        if(!this.trips.isEmpty()) {
+        if (!this.trips.isEmpty()) {
             this.trips.remove(trip);
             trip.getUsers().remove(this);
         }
@@ -154,18 +136,9 @@ public class User {
     }
 
 
-
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", verifyToken='" + verifyToken + '\'' +
-                ", status=" + status +
-                ", roles=" + roles +
-                '}';
+        return "User{" + "id=" + id + ", username='" + username + '\'' + ", email='" + email + '\'' + ", password='" + password + '\'' + ", verifyToken='" + verifyToken + '\'' + ", status=" + status + ", roles=" + roles + '}';
     }
 
 

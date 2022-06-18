@@ -28,7 +28,7 @@ public class NotificationMailContent extends  MailContent{
         Context context = new Context();
         context.setVariable("message", "You are going on a trip in next " + trip.getNotifyBefore() + " days (" + formatter.format(trip.getBeginDate()) + ")");
         context.setVariable("name", trip.getName());
-        String tripUrl = frontendUrl + "/trips/" + trip.getId();
+        String tripUrl = frontendUrl + "/trip/" + trip.getId();
         context.setVariable("tripUrl", tripUrl);
         String htmlBody = this.templateEngine.process(TRIP_NOTIFICATION_EMAIL_LOCATION, context);
 

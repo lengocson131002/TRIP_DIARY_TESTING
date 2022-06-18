@@ -116,6 +116,15 @@ public class TripServiceImpl implements TripService {
                 () -> new IllegalArgumentException("You have no permission to delete this trip")
         );
 
+        List<User> tripUsers = existedTrip.getUsers();
+        try {
+            for (User u: tripUsers) {
+                existedTrip.removeUser(u);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
         tripRepository.delete(existedTrip);
     }
 
@@ -239,11 +248,11 @@ public class TripServiceImpl implements TripService {
                 () -> new IllegalArgumentException("User with username or email \"" + username + "\" doesn't exist")
         );
 
-        if (existedTrip.getOwner().equals(invitedUser.getUsername()) ) {
+        if (existedTrip.getOwner().equals(invitedUser.getUsername())) {
             throw new IllegalArgumentException(username + " is this trip's owner");
         }
 
-        if(hasUser(existedTrip, invitedUser)) {
+        if (hasUser(existedTrip, invitedUser)) {
             throw new IllegalArgumentException(username + " was invited to join this trip before");
         }
 
@@ -255,6 +264,7 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
+    @Transactional
     public void removeTripMate(Long tripId, String username) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder
                 .getContext()
@@ -279,12 +289,12 @@ public class TripServiceImpl implements TripService {
                 () -> new IllegalArgumentException("User with username or email \"" + username + "\" doesn't exist")
         );
 
-        if (existedTrip.getOwner().equals(invitedUser.getUsername()) ) {
+        if (existedTrip.getOwner().equals(invitedUser.getUsername())) {
             throw new IllegalArgumentException(username + " is this trip's owner");
         }
 
 
-        if(!hasUser(existedTrip, invitedUser)) {
+        if (!hasUser(existedTrip, invitedUser)) {
             throw new IllegalArgumentException(username + " was not invited to join this trip before");
         }
 
