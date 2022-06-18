@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void register(RegisterRequest registerRequest) throws Exception {
+    public void register(RegisterRequest registerRequest, String backendUrl) throws Exception {
 
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
             throw new IllegalArgumentException("Username has already exist");

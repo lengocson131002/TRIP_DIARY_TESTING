@@ -96,7 +96,7 @@ public class AuthController {
             @RequestBody RegisterRequest registerRequest,
             HttpServletRequest request) throws Exception {
 
-        userService.register(registerRequest);
+        userService.register(registerRequest, getSiteURL(request));
 
         return ResponseEntity
                 .ok()
