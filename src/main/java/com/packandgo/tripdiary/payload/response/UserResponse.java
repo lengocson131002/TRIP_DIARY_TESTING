@@ -6,6 +6,7 @@ import java.util.List;
 
 public class UserResponse {
     private String username;
+    private String avatar;
     private String aboutMe;
     private String country;
     private String profileImageUrl;
@@ -60,5 +61,13 @@ public class UserResponse {
 
     public void setTrips(List<Trip> trips) {
         this.trips = trips;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

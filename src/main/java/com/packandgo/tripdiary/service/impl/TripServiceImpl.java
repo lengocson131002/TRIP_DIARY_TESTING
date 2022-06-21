@@ -248,7 +248,7 @@ public class TripServiceImpl implements TripService {
                 () -> new IllegalArgumentException("User with username or email \"" + username + "\" doesn't exist")
         );
 
-        if (existedTrip.getOwner().equals(invitedUser.getUsername())) {
+        if (invitedUser.getUsername().equals(existedTrip.getOwner())) {
             throw new IllegalArgumentException(username + " is this trip's owner");
         }
 
