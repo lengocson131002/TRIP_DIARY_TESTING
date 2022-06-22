@@ -20,4 +20,10 @@ public interface TripRepository extends PagingAndSortingRepository<Trip, Long> {
     List<Trip> getTripsForToday();
 
     boolean existsById(Long tripId);
+
+    @Query("FROM Trip t " +
+            "WHERE (lower(t.destination.address) like ?1 or lower(t.owner) like ?1 or lower(t.name) like ?1) " +
+            "and (t.status = 'PUBLIC' or t.status = 'public')"
+    )
+    List<Trip> search(String keyword);
 }

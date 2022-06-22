@@ -289,6 +289,45 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserResponse> search(String keyword) {
+        List<UserResponse> users = new ArrayList<>();
+        if(keyword == null || "".equals(keyword)) {
+            return users;
+        }
+        List<User> searchResult = userRepository.search("%" + keyword.toLowerCase()+ "%");
+        users = searchResult
+                .stream()
+                .map(u -> {
+
+                    /**
+                     *  private String username;
+                     *     private String avatar;
+                     *     private String aboutMe;
+                     *     private String country;
+                     *     private String profileImageUrl;
+                     *     private String coverImageUrl;
+                     *     private List<Trip> trips;
+                     */
+                    UserResponse userResponse = new UserResponse();
+                    UserInfo info = userInfoRepository.findByUserId(u.getId()).orElse(new UserInfo());
+                    userResponse.setUsername(u.getUsername());
+                    userResponse.setAboutMe(info.getAboutMe());
+                    userResponse.setCountry(info.getCountry());
+                    userResponse.setProfileImageUrl(info.getProfileImageUrl());
+                    userResponse.setCoverImageUrl(info.getCoverImageUrl());
+                    userResponse.setTrips(
+                            u.getTrips()
+                                    .stream()
+                                    .filter(t -> TripStatus.PUBLIC.equals(t.getStatus()))
+                                    .collect(Collectors.toList()));
+
+                    return userResponse;
+                })
+                .collect(Collectors.toList());
+        return users;
+    }
+
+    @Override
     public UserInfo getInfo(User user) {
         return userInfoRepository.findByUserId(user.getId()).orElseGet(() -> null);
     }

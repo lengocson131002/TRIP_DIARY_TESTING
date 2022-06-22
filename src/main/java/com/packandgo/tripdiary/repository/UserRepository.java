@@ -2,6 +2,7 @@ package com.packandgo.tripdiary.repository;
 
 import com.packandgo.tripdiary.model.Trip;
 import com.packandgo.tripdiary.model.User;
+import com.packandgo.tripdiary.payload.response.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +34,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT DISTINCT user FROM User user LEFT OUTER JOIN user.trips t")
     Page<User> findUsersAndAllTrips(Pageable pageable);
 
+    @Query("SELECT DISTINCT u " +
+            "FROM User u " +
+            "LEFT OUTER JOIN u.trips " +
+            "WHERE lower(u.username) like ?1")
+    List<User> search(String keyword);
 }

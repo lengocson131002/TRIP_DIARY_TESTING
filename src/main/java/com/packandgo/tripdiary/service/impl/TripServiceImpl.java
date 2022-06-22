@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -296,6 +297,16 @@ public class TripServiceImpl implements TripService {
 
         existedTrip.removeUser(invitedUser);
         tripRepository.save(existedTrip);
+    }
+
+    @Override
+    public List<Trip> search(String keyword) {
+        List<Trip> trips = new ArrayList<>();
+        if(keyword == null || "".equals(keyword)) {
+            return  trips;
+        }
+
+        return tripRepository.search("%" + keyword.toLowerCase()+ "%");
     }
 
     private boolean hasUser(Trip trip, User user) {
