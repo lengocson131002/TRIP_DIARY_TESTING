@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT user.trips FROM  User user WHERE user.id = ?1")
     List<Trip> findsTripByUserId(long id) ;
-    @Query(value = "SELECT DISTINCT user FROM User user LEFT OUTER JOIN user.trips")
+    @Query(value = "SELECT DISTINCT user FROM User user LEFT OUTER JOIN user.trips t")
     Page<User> findUsersAndAllTrips(Pageable pageable);
 
 }

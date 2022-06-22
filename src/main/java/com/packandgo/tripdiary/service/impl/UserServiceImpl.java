@@ -1,6 +1,7 @@
 package com.packandgo.tripdiary.service.impl;
 
 import com.packandgo.tripdiary.enums.Gender;
+import com.packandgo.tripdiary.enums.TripStatus;
 import com.packandgo.tripdiary.enums.UserStatus;
 import com.packandgo.tripdiary.exception.UserNotFoundException;
 import com.packandgo.tripdiary.model.*;
@@ -18,7 +19,6 @@ import com.packandgo.tripdiary.service.EmailSenderService;
 import com.packandgo.tripdiary.service.PasswordResetService;
 import com.packandgo.tripdiary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -59,13 +60,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User with email \"" + email+ "\" doesn't exist"));
+                .orElseThrow(() -> new UserNotFoundException("User with email \"" + email + "\" doesn't exist"));
     }
 
     @Override
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User with username \"" + username+ "\" doesn't exist"));
+                .orElseThrow(() -> new UserNotFoundException("User with username \"" + username + "\" doesn't exist"));
     }
 
     @Override
@@ -138,8 +139,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void changePassword(User user, String newPassword) {
-        if(newPassword == null || newPassword.trim().isEmpty()) {
-            throw  new IllegalArgumentException("New password is required");
+        if (newPassword == null || newPassword.trim().isEmpty()) {
+            throw new IllegalArgumentException("New password is required");
         }
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
@@ -217,10 +218,10 @@ public class UserServiceImpl implements UserService {
         userInfo.setProfileImageUrl(infoUpdateRequest.getProfileImageUrl());
         userInfo.setCoverImageUrl(infoUpdateRequest.getCoverImageUrl());
 
-        if(infoUpdateRequest.getGender() == null) {
+        if (infoUpdateRequest.getGender() == null) {
             userInfo.setGender(Gender.UNDEFINED);
         } else {
-            switch(infoUpdateRequest.getGender()) {
+            switch (infoUpdateRequest.getGender()) {
                 case "male": {
                     userInfo.setGender(Gender.MALE);
                     break;
@@ -239,18 +240,25 @@ public class UserServiceImpl implements UserService {
         userInfo.setDateOfBirth(infoUpdateRequest.getDateOfBirth());
         userInfo.setAboutMe(infoUpdateRequest.getAboutMe());
 
-       try {
-           userInfoRepository.save(userInfo);
-       } catch (Exception ex) {
-           throw new IllegalArgumentException("Can't update user info. Try again");
-       }
+        try {
+            userInfoRepository.save(userInfo);
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Can't update user info. Try again");
+        }
 
 
     }
-    
+
     @Override
-    public List<Trip> getTripsForUser(User user) {
-        List<Trip> trips = userRepository.findsTripByUserId(user.getId());
+    public List<Trip> getTripsForUser(User user, String me) {
+        List<Trip> allTrips = userRepository.findsTripByUserId(user.getId());
+        List<Trip> trips = new ArrayList<>();
+        if(me != null && (("me".equals(me) || "ME".equals(me)))) {
+            trips = allTrips;
+        } else {
+            trips = allTrips.stream().filter(t -> t.getStatus().equals(TripStatus.PUBLIC)).collect(Collectors.toList());
+        }
+
         return trips;
     }
 
@@ -258,17 +266,24 @@ public class UserServiceImpl implements UserService {
     public Page<UserResponse> getUsersAndAllTrips(int page, int size) {
         Pageable paging = PageRequest.of(page - 1, size);
         Page<User> resultUser = userRepository.findUsersAndAllTrips(paging);
+
+        //only get public trips
         Page<UserResponse> resultUserResponse = resultUser.map(user -> {
 
-           UserResponse response =  new UserResponse();
-           UserInfo info = getInfo(user);
-           response.setUsername(user.getUsername());
-           response.setAboutMe(info.getAboutMe());
-           response.setCountry(info.getCountry());
-           response.setCoverImageUrl(info.getCoverImageUrl());
-           response.setProfileImageUrl(info.getProfileImageUrl());
-           response.setTrips(user.getTrips());
-           return  response;
+            List<Trip> trips = user.getTrips()
+                    .stream()
+                    .filter(t -> TripStatus.PUBLIC.equals(t.getStatus()))
+                    .collect(Collectors.toList());
+
+            UserResponse response = new UserResponse();
+            UserInfo info = getInfo(user);
+            response.setUsername(user.getUsername());
+            response.setAboutMe(info.getAboutMe());
+            response.setCountry(info.getCountry());
+            response.setCoverImageUrl(info.getCoverImageUrl());
+            response.setProfileImageUrl(info.getProfileImageUrl());
+            response.setTrips(trips);
+            return response;
         });
         return resultUserResponse;
     }

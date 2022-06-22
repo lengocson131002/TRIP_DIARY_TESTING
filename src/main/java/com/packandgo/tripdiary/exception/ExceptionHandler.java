@@ -22,7 +22,7 @@ public class ExceptionHandler {
     public ResponseEntity<ErrorResponse> handDateConvertException(Exception ex, WebRequest request) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Invalid date format, correct format is yyyy-MM-dd",
+                "Invalid date format, correct format is YYYY-MM-DD",
                 new Date(),
                 ((ServletWebRequest) request).getRequest().getRequestURI().toString()
         );

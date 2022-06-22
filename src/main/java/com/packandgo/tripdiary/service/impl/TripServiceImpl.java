@@ -116,16 +116,12 @@ public class TripServiceImpl implements TripService {
                 () -> new IllegalArgumentException("You have no permission to delete this trip")
         );
 
-        List<User> tripUsers = existedTrip.getUsers();
         try {
-            for (User u: tripUsers) {
-                existedTrip.removeUser(u);
-            }
+            tripRepository.delete(existedTrip);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        tripRepository.delete(existedTrip);
     }
 
     @Override

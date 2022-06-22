@@ -29,7 +29,9 @@ public class VisitDay {
 
     @OneToMany(mappedBy = "visitDay",
             fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
+            cascade = {
+                CascadeType.MERGE
+            },
             orphanRemoval = true
     )
     private List<VisitPlace> visitPlaces = new ArrayList<>();
@@ -43,7 +45,7 @@ public class VisitDay {
     }
 
     public void addVisitPlace(VisitPlace place) {
-        if(this.visitPlaces == null) {
+        if (this.visitPlaces == null) {
             this.visitPlaces = new ArrayList<>();
         }
         this.visitPlaces.add(place);
@@ -88,7 +90,7 @@ public class VisitDay {
 
     public void setVisitPlaces(List<VisitPlace> visitPlaces) {
         visitPlaces.forEach(place -> place.setVisitDay(this));
-        if(this.visitPlaces == null) {
+        if (this.visitPlaces == null) {
             visitPlaces = new ArrayList<>();
         }
         this.visitPlaces = visitPlaces;

@@ -67,21 +67,24 @@ public class Trip {
     @Column(name = "notify_before")
     private int notifyBefore;
 
-    @ManyToMany(
-            mappedBy = "trips",
-            cascade =
-                    {
-                            CascadeType.DETACH,
-                            CascadeType.MERGE,
-                            CascadeType.REFRESH,
-                            CascadeType.PERSIST
-                    })
+    @ManyToMany(cascade = {}, fetch = FetchType.LAZY)
+    @JoinTable(
+            name="user_trip",
+            joinColumns = @JoinColumn(name = "trip_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     @JsonIgnore
     private List<User> users;
 
     @OneToMany(mappedBy = "trip",
             fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
+            cascade = {
+                    CascadeType.MERGE,
+                    CascadeType.REMOVE,
+                    CascadeType.DETACH,
+                    CascadeType.REFRESH,
+                    CascadeType.PERSIST
+            },
             orphanRemoval = true
     )
     private List<VisitDay> visitDays;
@@ -154,7 +157,7 @@ public class Trip {
             }
         }
 
-        TripStatus status = request.getStatus().toLowerCase().equals("private") ?
+        TripStatus status = "private".equals(request.getStatus().toLowerCase()) ?
                 TripStatus.PRIVATE : TripStatus.PUBLIC;
 
         this.setStatus(status);
@@ -363,7 +366,7 @@ public class Trip {
             this.users = new ArrayList<>();
         }
         this.users.add(user);
-        user.getTrips().add(this);
+//        user.getTrips().add(this);
     }
 
     public void removeUser(User user) {

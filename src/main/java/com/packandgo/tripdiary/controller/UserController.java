@@ -25,10 +25,12 @@ public class UserController {
     }
 
     @GetMapping("/{username}/trips")
-    public ResponseEntity<?> getUserWithAllTrips(@PathVariable(name = "username", required = true) String username) {
+    public ResponseEntity<?> getUserWithAllTrips(
+            @PathVariable(name = "username", required = true) String username,
+            @RequestParam(name = "target", required = false) String me) {
         User user = userService.findUserByUsername(username);
         UserInfo userInfo = userService.getInfo(user);
-        List<Trip> trips = userService.getTripsForUser(user);
+        List<Trip> trips = userService.getTripsForUser(user, me);
 
         UserResponse userResponse = new UserResponse();
 

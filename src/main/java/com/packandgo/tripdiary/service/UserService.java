@@ -27,6 +27,6 @@ public interface UserService {
     public UserInfo getInfo(User user);
 
     public void updateUserInfo(User user, InfoUpdateRequest infoUpdateRequest);
-    public List<Trip> getTripsForUser(User user);
+    public List<Trip> getTripsForUser(User user, String me);
     public Page<UserResponse> getUsersAndAllTrips(int page, int size);
 }

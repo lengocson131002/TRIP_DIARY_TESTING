@@ -35,7 +35,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/**/*swagger*/**",
             "/admin/api/**",
 
-
     };
 
     private final UserDetailsServiceImpl userDetailsService;

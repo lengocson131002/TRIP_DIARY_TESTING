@@ -18,7 +18,7 @@ public class VisitPlace {
     private double longitude;
     private double latitude;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
     @JoinColumn(name = "visitday_id", referencedColumnName = "id")
     @JsonIgnore
     private VisitDay visitDay;
