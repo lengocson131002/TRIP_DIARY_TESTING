@@ -23,6 +23,8 @@ public abstract class TripPayload {
     private List<String> preparedList;
     private String status;
     private String note;
+
+    private String description;
     private int notifyBefore;
     private List<VisitDay> visitDays = new ArrayList<>();
     private String concurrencyUnit;
@@ -132,5 +134,13 @@ public abstract class TripPayload {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

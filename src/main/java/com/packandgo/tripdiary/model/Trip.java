@@ -91,7 +91,8 @@ public class Trip {
 
     private String owner;
 
-    public String concurrencyUnit;
+    private String concurrencyUnit;
+    private String description;
 
     @OneToMany(mappedBy = "trip",
             fetch = FetchType.LAZY,
@@ -167,6 +168,7 @@ public class Trip {
         this.setPriceList(request.getPriceList());
         this.setPreparedList(request.getPreparedList());
         this.setNote(request.getNote());
+        this.setDescription(request.getDescription());
 
         if (request.getConcurrencyUnit() == null ||
                 request.getConcurrencyUnit().trim().length() == 0) {
@@ -196,6 +198,7 @@ public class Trip {
         tripResponse.setNotifyBefore(this.getNotifyBefore());
         tripResponse.setNumOfLikes(0);
         tripResponse.setOwner(this.owner);
+        tripResponse.setDescription(this.description);
         this.users.forEach(user -> {
             if (!user.getUsername().equals(owner))
                 tripResponse.getTripMates().add(user.getUsername());
@@ -217,6 +220,14 @@ public class Trip {
         }
         this.priceList.add(item);
         item.setTrip(this);
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public List<User> getUsers() {

@@ -30,7 +30,7 @@ public class VisitDay {
     @OneToMany(mappedBy = "visitDay",
             fetch = FetchType.LAZY,
             cascade = {
-                CascadeType.MERGE
+                CascadeType.ALL
             },
             orphanRemoval = true
     )
