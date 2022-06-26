@@ -13,10 +13,10 @@ public abstract class TripPayload {
     private String thumbnailUrl;
     private Destination destination;
     private String name;
-    @JsonFormat(pattern = "yyyy-MM-dd",shape = JsonFormat.Shape.STRING, timezone = "GMT+7")
+    @JsonFormat(pattern = "yyyy-MM-dd",shape = JsonFormat.Shape.STRING)
     private Date beginDate;
 
-    @JsonFormat(pattern = "yyyy-MM-dd",shape = JsonFormat.Shape.STRING, timezone = "GMT+7")
+    @JsonFormat(pattern = "yyyy-MM-dd",shape = JsonFormat.Shape.STRING)
     private Date endDate;
 
     private String transportation;
