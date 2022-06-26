@@ -40,6 +40,17 @@ public class ExceptionHandler {
         );
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(NotificationNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotificationNotFound(Exception ex, WebRequest request) {
+        return new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                new Date(),
+                ((ServletWebRequest) request).getRequest().getRequestURI().toString()
+        );
+    }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleWrongType(Exception ex, WebRequest request) {

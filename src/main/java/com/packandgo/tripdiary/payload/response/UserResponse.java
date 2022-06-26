@@ -11,7 +11,7 @@ public class UserResponse {
     private String country;
     private String profileImageUrl;
     private String coverImageUrl;
-    private List<Trip> trips;
+    private List<TripResponse> trips;
 
     public UserResponse() {}
 
@@ -55,11 +55,11 @@ public class UserResponse {
         this.coverImageUrl = coverImageUrl;
     }
 
-    public List<Trip> getTrips() {
+    public List<TripResponse> getTrips() {
         return trips;
     }
 
-    public void setTrips(List<Trip> trips) {
+    public void setTrips(List<TripResponse> trips) {
         this.trips = trips;
     }
 

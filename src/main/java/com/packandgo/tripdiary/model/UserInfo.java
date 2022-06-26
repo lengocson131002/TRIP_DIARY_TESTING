@@ -45,11 +45,10 @@ public class UserInfo {
 
     @Column(name = "gender")
     @Enumerated(EnumType.STRING)
-
     private Gender gender;
     @Column(name = "dateOfBirth")
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd",shape = JsonFormat.Shape.STRING, timezone = "GMT+7")
     private Date dateOfBirth;
 
     @Column(name = "about_me")

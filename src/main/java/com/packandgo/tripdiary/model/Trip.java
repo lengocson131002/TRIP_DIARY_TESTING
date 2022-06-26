@@ -40,12 +40,12 @@ public class Trip {
     private Destination destination;
 
     @Column(name = "begin_date")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd",shape = JsonFormat.Shape.STRING, timezone = "GMT+7")
     @Temporal(TemporalType.DATE)
     private Date beginDate;
 
     @Column(name = "end_date")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd",shape = JsonFormat.Shape.STRING, timezone = "GMT+7")
     @Temporal(TemporalType.DATE)
     private Date endDate;
 

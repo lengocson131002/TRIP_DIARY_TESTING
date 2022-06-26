@@ -10,6 +10,7 @@ import com.packandgo.tripdiary.model.mail.VerifyEmailMailContent;
 import com.packandgo.tripdiary.payload.request.auth.NewPasswordRequest;
 import com.packandgo.tripdiary.payload.request.auth.RegisterRequest;
 import com.packandgo.tripdiary.payload.request.user.InfoUpdateRequest;
+import com.packandgo.tripdiary.payload.response.TripResponse;
 import com.packandgo.tripdiary.payload.response.UserResponse;
 import com.packandgo.tripdiary.repository.PasswordResetRepository;
 import com.packandgo.tripdiary.repository.RoleRepository;
@@ -274,6 +275,10 @@ public class UserServiceImpl implements UserService {
                     .stream()
                     .filter(t -> TripStatus.PUBLIC.equals(t.getStatus()))
                     .collect(Collectors.toList());
+            List<TripResponse> tripResponses = trips
+                    .stream()
+                    .map(trip -> trip.toResponse())
+                    .collect(Collectors.toList());
 
             UserResponse response = new UserResponse();
             UserInfo info = getInfo(user);
@@ -282,7 +287,7 @@ public class UserServiceImpl implements UserService {
             response.setCountry(info.getCountry());
             response.setCoverImageUrl(info.getCoverImageUrl());
             response.setProfileImageUrl(info.getProfileImageUrl());
-            response.setTrips(trips);
+            response.setTrips(tripResponses);
             return response;
         });
         return resultUserResponse;
@@ -319,6 +324,7 @@ public class UserServiceImpl implements UserService {
                             u.getTrips()
                                     .stream()
                                     .filter(t -> TripStatus.PUBLIC.equals(t.getStatus()))
+                                    .map(t -> t.toResponse())
                                     .collect(Collectors.toList()));
 
                     return userResponse;

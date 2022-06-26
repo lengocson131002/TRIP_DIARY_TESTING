@@ -4,6 +4,7 @@ import com.packandgo.tripdiary.model.Trip;
 import com.packandgo.tripdiary.model.User;
 import com.packandgo.tripdiary.model.UserInfo;
 import com.packandgo.tripdiary.payload.response.PagingResponse;
+import com.packandgo.tripdiary.payload.response.TripResponse;
 import com.packandgo.tripdiary.payload.response.UserResponse;
 import com.packandgo.tripdiary.service.TripService;
 import com.packandgo.tripdiary.service.UserService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -31,6 +33,10 @@ public class UserController {
         User user = userService.findUserByUsername(username);
         UserInfo userInfo = userService.getInfo(user);
         List<Trip> trips = userService.getTripsForUser(user, me);
+        List<TripResponse> tripResponses = trips
+                .stream()
+                .map(trip -> trip.toResponse())
+                .collect(Collectors.toList());
 
         UserResponse userResponse = new UserResponse();
 
@@ -39,7 +45,7 @@ public class UserController {
         userResponse.setCountry(userInfo.getCountry());
         userResponse.setProfileImageUrl(userInfo.getProfileImageUrl());
         userResponse.setCoverImageUrl(userInfo.getCoverImageUrl());
-        userResponse.setTrips(trips);
+        userResponse.setTrips(tripResponses);
 
         return ResponseEntity.ok(userResponse);
     }

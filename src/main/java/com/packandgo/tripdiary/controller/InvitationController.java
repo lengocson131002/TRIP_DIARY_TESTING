@@ -1,6 +1,7 @@
 package com.packandgo.tripdiary.controller;
 
 import com.packandgo.tripdiary.payload.response.MessageResponse;
+import com.packandgo.tripdiary.service.NotificationService;
 import com.packandgo.tripdiary.service.TripService;
 import com.packandgo.tripdiary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ public class InvitationController {
 
     private final TripService tripService;
     private final UserService userService;
+
 
     @Autowired
     public InvitationController(TripService tripService, UserService userService) {

@@ -1,15 +1,14 @@
 package com.packandgo.tripdiary.service.impl;
 
+import com.packandgo.tripdiary.enums.NotificationType;
 import com.packandgo.tripdiary.model.Like;
+import com.packandgo.tripdiary.model.Notification;
 import com.packandgo.tripdiary.model.Trip;
 import com.packandgo.tripdiary.model.User;
 import com.packandgo.tripdiary.model.mail.InviteJoinTripContent;
 import com.packandgo.tripdiary.model.mail.MailContent;
 import com.packandgo.tripdiary.payload.request.trip.TripRequest;
-import com.packandgo.tripdiary.repository.DestinationRepository;
-import com.packandgo.tripdiary.repository.LikeRepository;
-import com.packandgo.tripdiary.repository.TripRepository;
-import com.packandgo.tripdiary.repository.UserRepository;
+import com.packandgo.tripdiary.repository.*;
 import com.packandgo.tripdiary.service.EmailSenderService;
 import com.packandgo.tripdiary.service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -34,6 +34,8 @@ public class TripServiceImpl implements TripService {
     private final DestinationRepository destinationRepository;
     private final LikeRepository likeRepository;
     private final EmailSenderService mailService;
+    private final NotificationRepository notificationRepository;
+
 
     @Value("${tripdiary.baseurl.frontend}")
     private String frontendUrl;
@@ -43,12 +45,14 @@ public class TripServiceImpl implements TripService {
                            UserRepository userRepository,
                            DestinationRepository destinationRepository,
                            LikeRepository likeRepository,
-                           EmailSenderService mailService) {
+                           EmailSenderService mailService,
+                           NotificationRepository notificationRepository) {
         this.tripRepository = tripRepository;
         this.userRepository = userRepository;
         this.destinationRepository = destinationRepository;
         this.likeRepository = likeRepository;
         this.mailService = mailService;
+        this.notificationRepository = notificationRepository;
     }
 
     @Override
@@ -256,6 +260,15 @@ public class TripServiceImpl implements TripService {
         MailContent invitationMail = new InviteJoinTripContent(existedTrip, invitedUser, frontendUrl);
         mailService.sendEmail(invitationMail);
         existedTrip.addUser(invitedUser);
+
+        //create notification
+        Notification notification = new Notification();
+        notification.setTrip(existedTrip);
+        notification.setCreatedAt(new Date());
+        notification.setUser(invitedUser);
+        notification.setType(NotificationType.INVITATION);
+        notificationRepository.save(notification);
+
         tripRepository.save(existedTrip);
 
     }
