@@ -9,7 +9,6 @@ import com.packandgo.tripdiary.model.mail.InviteJoinTripContent;
 import com.packandgo.tripdiary.model.mail.MailContent;
 import com.packandgo.tripdiary.payload.request.trip.TripRequest;
 import com.packandgo.tripdiary.repository.*;
-import com.packandgo.tripdiary.service.EmailSenderService;
 import com.packandgo.tripdiary.service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +32,6 @@ public class TripServiceImpl implements TripService {
     private final UserRepository userRepository;
     private final DestinationRepository destinationRepository;
     private final LikeRepository likeRepository;
-    private final EmailSenderService mailService;
     private final NotificationRepository notificationRepository;
 
 
@@ -45,13 +43,11 @@ public class TripServiceImpl implements TripService {
                            UserRepository userRepository,
                            DestinationRepository destinationRepository,
                            LikeRepository likeRepository,
-                           EmailSenderService mailService,
                            NotificationRepository notificationRepository) {
         this.tripRepository = tripRepository;
         this.userRepository = userRepository;
         this.destinationRepository = destinationRepository;
         this.likeRepository = likeRepository;
-        this.mailService = mailService;
         this.notificationRepository = notificationRepository;
     }
 
@@ -258,7 +254,6 @@ public class TripServiceImpl implements TripService {
         }
 
         MailContent invitationMail = new InviteJoinTripContent(existedTrip, invitedUser, frontendUrl);
-        mailService.sendEmail(invitationMail);
         existedTrip.addUser(invitedUser);
 
         //create notification

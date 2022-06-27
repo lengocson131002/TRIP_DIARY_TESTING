@@ -6,7 +6,6 @@ import com.packandgo.tripdiary.model.Trip;
 import com.packandgo.tripdiary.model.User;
 import com.packandgo.tripdiary.model.mail.MailContent;
 import com.packandgo.tripdiary.model.mail.NotificationMailContent;
-import com.packandgo.tripdiary.service.EmailSenderService;
 import com.packandgo.tripdiary.service.NotificationService;
 import com.packandgo.tripdiary.service.TripService;
 import com.packandgo.tripdiary.service.UserService;
@@ -29,7 +28,6 @@ public class Scheduler {
     private final TripService tripService;
     private final UserService userService;
     private final NotificationService notificationService;
-    private final EmailSenderService emailSenderService;
 
     @Value("${tripdiary.baseurl.frontend}")
     private String frontendUrl;
@@ -37,12 +35,10 @@ public class Scheduler {
     @Autowired
     public Scheduler(TripService tripService,
                      UserService userService,
-                     NotificationService notificationService,
-                     EmailSenderService emailSenderService) {
+                     NotificationService notificationService) {
         this.tripService = tripService;
         this.userService = userService;
         this.notificationService = notificationService;
-        this.emailSenderService = emailSenderService;
     }
 
     /**
@@ -58,9 +54,6 @@ public class Scheduler {
             for (Trip trip : notifiedTrip) {
                 List<User> users = trip.getUsers();
                 for (User user : users) {
-                    MailContent mailContent = new NotificationMailContent(trip, user, frontendUrl);
-                    emailSenderService.sendEmail(mailContent);
-
                     //save notification;
                     Notification notification = new Notification();
                     notification.setType(NotificationType.COMING_TRIP);

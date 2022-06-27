@@ -16,7 +16,6 @@ import com.packandgo.tripdiary.repository.PasswordResetRepository;
 import com.packandgo.tripdiary.repository.RoleRepository;
 import com.packandgo.tripdiary.repository.UserInfoRepository;
 import com.packandgo.tripdiary.repository.UserRepository;
-import com.packandgo.tripdiary.service.EmailSenderService;
 import com.packandgo.tripdiary.service.PasswordResetService;
 import com.packandgo.tripdiary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,6 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordResetRepository passwordResetRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EmailSenderService emailSenderService;
     private final PasswordResetService passwordResetService;
 
 
@@ -47,14 +45,12 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository,
                            UserInfoRepository userInfoRepository,
                            RoleRepository roleRepository, PasswordResetRepository passwordResetRepository,
-                           PasswordEncoder passwordEncoder,
-                           EmailSenderService emailSenderService, PasswordResetService passwordResetService) {
+                           PasswordEncoder passwordEncoder, PasswordResetService passwordResetService) {
         this.userRepository = userRepository;
         this.userInfoRepository = userInfoRepository;
         this.roleRepository = roleRepository;
         this.passwordResetRepository = passwordResetRepository;
         this.passwordEncoder = passwordEncoder;
-        this.emailSenderService = emailSenderService;
         this.passwordResetService = passwordResetService;
     }
 
@@ -130,9 +126,6 @@ public class UserServiceImpl implements UserService {
         userInfo.setUser(user);
         userInfo.setGender(Gender.UNDEFINED);
 
-        //create verify email
-        MailContent mailContent = new VerifyEmailMailContent(user.getEmail(), user.getVerifyToken(), backendUrl);
-        emailSenderService.sendEmail(mailContent);
         userRepository.save(user);
         userInfoRepository.save(userInfo);
     }
@@ -304,15 +297,6 @@ public class UserServiceImpl implements UserService {
                 .stream()
                 .map(u -> {
 
-                    /**
-                     *  private String username;
-                     *     private String avatar;
-                     *     private String aboutMe;
-                     *     private String country;
-                     *     private String profileImageUrl;
-                     *     private String coverImageUrl;
-                     *     private List<Trip> trips;
-                     */
                     UserResponse userResponse = new UserResponse();
                     UserInfo info = userInfoRepository.findByUserId(u.getId()).orElse(new UserInfo());
                     userResponse.setUsername(u.getUsername());

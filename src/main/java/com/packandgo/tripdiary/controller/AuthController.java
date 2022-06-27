@@ -1,18 +1,15 @@
 package com.packandgo.tripdiary.controller;
 
 import com.packandgo.tripdiary.auth.UserDetailsImpl;
-import com.packandgo.tripdiary.constants.BaseUrl;
 import com.packandgo.tripdiary.model.User;
 import com.packandgo.tripdiary.model.mail.MailContent;
 import com.packandgo.tripdiary.model.mail.ResetPasswordMailContent;
-import com.packandgo.tripdiary.model.mail.VerifyEmailMailContent;
 import com.packandgo.tripdiary.payload.request.auth.LoginRequest;
 import com.packandgo.tripdiary.payload.request.auth.PasswordResetRequest;
 import com.packandgo.tripdiary.payload.request.auth.NewPasswordRequest;
 import com.packandgo.tripdiary.payload.request.auth.RegisterRequest;
 import com.packandgo.tripdiary.payload.response.JwtResponse;
 import com.packandgo.tripdiary.payload.response.MessageResponse;
-import com.packandgo.tripdiary.service.EmailSenderService;
 import com.packandgo.tripdiary.service.PasswordResetService;
 import com.packandgo.tripdiary.service.UserService;
 import com.packandgo.tripdiary.util.JwtUtils;
@@ -38,7 +35,6 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtUtils jwtUtils;
-    private final EmailSenderService emailSenderService;
     private final PasswordResetService passwordResetService;
 
     @Value("${tripdiary.baseurl.frontend}")
@@ -50,12 +46,10 @@ public class AuthController {
     public AuthController(AuthenticationManager authenticationManager,
                           UserService userService,
                           JwtUtils jwtUtils,
-                          EmailSenderService emailSenderService,
                           PasswordResetService passwordResetService) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.jwtUtils = jwtUtils;
-        this.emailSenderService = emailSenderService;
         this.passwordResetService = passwordResetService;
     }
 
@@ -124,8 +118,6 @@ public class AuthController {
 
         //sendEmail
         //create reset password email;
-        MailContent mailContent = new ResetPasswordMailContent(user.getEmail(), token, frontendUrl);
-        emailSenderService.sendEmail(mailContent);
 
         return ResponseEntity.ok(new MessageResponse("Request to reset password sent. Check your email for detail"));
     }
