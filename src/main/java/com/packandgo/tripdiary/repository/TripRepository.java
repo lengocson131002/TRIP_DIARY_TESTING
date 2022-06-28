@@ -12,7 +12,6 @@ import java.util.List;
 
 @Repository
 public interface TripRepository extends PagingAndSortingRepository<Trip, Long> {
-
     @Query("FROM Trip t WHERE t.status = 'PUBLIC' or t.status = 'public'")
     Page<Trip> findAll(Pageable pageable);
 
@@ -26,4 +25,5 @@ public interface TripRepository extends PagingAndSortingRepository<Trip, Long> {
             "and (t.status = 'PUBLIC' or t.status = 'public')"
     )
     List<Trip> search(String keyword);
+
 }

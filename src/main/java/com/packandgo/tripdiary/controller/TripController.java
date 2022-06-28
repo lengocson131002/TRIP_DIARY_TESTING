@@ -7,6 +7,7 @@ import com.packandgo.tripdiary.payload.request.trip.TripRequest;
 import com.packandgo.tripdiary.payload.response.MessageResponse;
 import com.packandgo.tripdiary.payload.response.PagingResponse;
 import com.packandgo.tripdiary.payload.response.TripResponse;
+import com.packandgo.tripdiary.repository.UserRepository;
 import com.packandgo.tripdiary.service.TripService;
 import com.packandgo.tripdiary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/trips")
 public class TripController {
     private final TripService tripService;
+    private final UserRepository userRepository;
     private final UserService userService;
 
     @Autowired
-    public TripController(TripService tripService, UserService userService) {
+    public TripController(TripService tripService, UserRepository userRepository, UserService userService) {
         this.tripService = tripService;
+        this.userRepository = userRepository;
         this.userService = userService;
     }
 
@@ -56,6 +59,7 @@ public class TripController {
 
     @PostMapping("")
     public ResponseEntity<?> insertTrip(@RequestBody TripRequest tripRequest) {
+
         Trip savedTrip = tripService.insertTrip(tripRequest);
         TripResponse tripResponse = savedTrip.toResponse();
         return ResponseEntity.ok(tripResponse);

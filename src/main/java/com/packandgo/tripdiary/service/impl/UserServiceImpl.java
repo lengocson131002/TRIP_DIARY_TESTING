@@ -95,7 +95,6 @@ public class UserServiceImpl implements UserService {
         passwordResetRepository.save(passwordResetToken);
 
         return token;
-
     }
 
     @Override

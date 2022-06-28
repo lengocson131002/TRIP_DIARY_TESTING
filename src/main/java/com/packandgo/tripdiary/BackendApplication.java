@@ -12,7 +12,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import javax.transaction.Transactional;
 
 @SpringBootApplication
-@EnableWebMvc
 @EnableScheduling
 public class BackendApplication{
 
