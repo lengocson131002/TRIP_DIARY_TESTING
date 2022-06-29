@@ -41,9 +41,6 @@ public class User {
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-    private List<Like> likes = new ArrayList<>();
-
     public User() {
     }
 
@@ -115,20 +112,6 @@ public class User {
         this.status = status;
     }
 
-    public void addTrip(Trip trip) {
-        if (this.trips == null) {
-            trips = new ArrayList<>();
-        }
-        this.trips.add(trip);
-        trip.setOwner(this.username);
-    }
-
-    public void removeTrip(Trip trip) {
-        if (!this.trips.isEmpty()) {
-            this.trips.remove(trip);
-            trip.getUsers().remove(this);
-        }
-    }
 
     public Set<Role> getRoles() {
         return roles;

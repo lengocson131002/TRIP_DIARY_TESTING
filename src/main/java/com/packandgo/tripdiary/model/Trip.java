@@ -76,19 +76,6 @@ public class Trip {
     @JsonIgnore
     private List<User> users;
 
-    @OneToMany(mappedBy = "trip",
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.MERGE,
-                    CascadeType.REMOVE,
-                    CascadeType.DETACH,
-                    CascadeType.REFRESH,
-                    CascadeType.PERSIST
-            },
-            orphanRemoval = true
-    )
-    private List<VisitDay> visitDays;
-
     private String owner;
 
     private String concurrencyUnit;
@@ -103,7 +90,6 @@ public class Trip {
 
     public Trip() {
         priceList = new ArrayList<>();
-        visitDays = new ArrayList<>();
         users = new ArrayList<>();
     }
 
@@ -164,7 +150,6 @@ public class Trip {
         this.setStatus(status);
         this.setNotifyBefore(request.getNotifyBefore());
 
-        this.setVisitDays(request.getVisitDays());
         this.setPriceList(request.getPriceList());
         this.setPreparedList(request.getPreparedList());
         this.setNote(request.getNote());
@@ -193,7 +178,6 @@ public class Trip {
         tripResponse.setStatus(this.getStatus().toString());
         tripResponse.setNote(this.getNote());
         tripResponse.setConcurrencyUnit(this.getConcurrencyUnit());
-        tripResponse.setVisitDays(this.getVisitDays());
         tripResponse.setPriceList(this.getPriceList());
         tripResponse.setNotifyBefore(this.getNotifyBefore());
         tripResponse.setNumOfLikes(0);
@@ -206,13 +190,6 @@ public class Trip {
         return tripResponse;
     }
 
-    public void addVisitDay(VisitDay visitDay) {
-        if (this.visitDays == null) {
-            visitDays = new ArrayList<>();
-        }
-        this.visitDays.add(visitDay);
-        visitDay.setTrip(this);
-    }
 
     public void addPriceItem(PriceItem item) {
         if (this.priceList == null) {
@@ -304,18 +281,6 @@ public class Trip {
 
     public void setStatus(TripStatus status) {
         this.status = status;
-    }
-
-    public List<VisitDay> getVisitDays() {
-        return visitDays;
-    }
-
-    public void setVisitDays(List<VisitDay> visitDays) {
-        visitDays.forEach(day -> day.setTrip(this));
-        if (this.visitDays != null) {
-            this.visitDays.clear();
-        }
-        this.visitDays.addAll(visitDays);
     }
 
     public List<PriceItem> getPriceList() {

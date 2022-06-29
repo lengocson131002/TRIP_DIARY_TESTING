@@ -4,17 +4,16 @@ import com.packandgo.tripdiary.enums.TripStatus;
 import com.packandgo.tripdiary.model.Destination;
 import com.packandgo.tripdiary.model.Trip;
 import com.packandgo.tripdiary.repository.TripRepository;
-import com.packandgo.tripdiary.repository.UserRepository;
 import io.jsonwebtoken.lang.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Date;
 
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class TripRepositoryTest {
 
     @Autowired
@@ -39,7 +38,9 @@ public class TripRepositoryTest {
         trip.setConcurrencyUnit("VND");
 
         Trip savedTrip = tripRepository.save(trip);
+
         Assert.isTrue(savedTrip.getName() == trip.getName());
+        Assert.isTrue(savedTrip.getId() == 1);
 
     }
 
