@@ -15,12 +15,19 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+    
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
     Optional<User> findByUsernameOrEmail(String username, String email);
+
+    @Query(value = "SELECT DISTINCT user FROM User user LEFT OUTER JOIN user.trips t")
+    Page<User> findUsersAndAllTrips(Pageable pageable);
+
+
     Boolean existsByUsernameOrEmail(String username, String email);
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
+
 
     @Query("SELECT u FROM User u WHERE u.verifyToken = ?1")
     public User findByVerifyToken(String verifyToken);
@@ -31,8 +38,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT user.trips FROM  User user WHERE user.id = ?1")
     List<Trip> findsTripByUserId(long id) ;
-    @Query(value = "SELECT DISTINCT user FROM User user LEFT OUTER JOIN user.trips t")
-    Page<User> findUsersAndAllTrips(Pageable pageable);
+
 
     @Query("SELECT DISTINCT u " +
             "FROM User u " +

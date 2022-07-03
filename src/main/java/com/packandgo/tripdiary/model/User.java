@@ -18,12 +18,14 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @NotBlank
+    @Column(nullable = false)
     private String username;
 
-    @NotBlank
+
+    @Column(nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     private String verifyToken;
@@ -37,11 +39,15 @@ public class User {
     @JsonIgnore
     private List<Trip> trips = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
     public User() {
+        this.verifyToken = UUID.randomUUID().toString();
+        this.status = UserStatus.INACTIVE;
     }
 
     public User(String username, String email, String password) {

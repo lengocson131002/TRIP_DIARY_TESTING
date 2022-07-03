@@ -13,6 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class Trip {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @Column(name = "thumbnail_url")
@@ -37,6 +39,7 @@ public class Trip {
             name = "destination_id",
             referencedColumnName = "id"
     )
+    @NotNull
     private Destination destination;
 
     @Column(name = "begin_date")
@@ -77,7 +80,6 @@ public class Trip {
     private List<User> users;
 
     private String owner;
-
     private String concurrencyUnit;
     private String description;
 
