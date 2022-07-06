@@ -7,6 +7,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 @Entity
@@ -18,14 +19,14 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(nullable = false)
+    @NotNull
     private String username;
 
 
-    @Column(nullable = false)
+    @NotNull
     private String email;
 
-    @Column(nullable = false)
+    @NotNull
     private String password;
 
     private String verifyToken;

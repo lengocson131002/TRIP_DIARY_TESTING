@@ -8,24 +8,26 @@ import com.packandgo.tripdiary.repository.RoleRepository;
 import com.packandgo.tripdiary.repository.TripRepository;
 import com.packandgo.tripdiary.repository.UserRepository;
 import io.jsonwebtoken.lang.Assert;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.hibernate.annotations.DynamicUpdate;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.DataIntegrityViolationException;
+
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.test.annotation.Rollback;
 
 import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @DataJpaTest
 @Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserRepositoryTest {
 
     @Autowired
@@ -37,9 +39,20 @@ public class UserRepositoryTest {
     @Autowired
     private RoleRepository roleRepository;
 
+
+    @Test
+    @Order(0)
+    @DisplayName("Test all repositories are not null")
+    public void testRepository() {
+        Assertions.assertNotNull(tripRepository);
+        Assertions.assertNotNull(userRepository);
+        Assertions.assertNotNull(roleRepository);
+    }
+
     @Test
     @DisplayName("Test insert user successfully")
     @Rollback(false)
+    @Order(1)
     public void saveUserTest1() {
 
         Role role = new Role("USER");
@@ -64,6 +77,7 @@ public class UserRepositoryTest {
         Assert.isTrue(user.getEmail().equals(savedUser.getEmail()));
         Assert.isTrue(user.getPassword().equals(savedUser.getPassword()));
         Assert.isTrue(user.getStatus().equals(UserStatus.INACTIVE));
+        Assert.isTrue(user.getVerifyToken() != null);
 
         Set<Role> saveUserRoles = savedUser.getRoles();
         Assert.isTrue(saveUserRoles
@@ -73,6 +87,7 @@ public class UserRepositoryTest {
 
     @Test
     @DisplayName("Test when insert user without email")
+    @Order(2)
     public void saveUserTest2() {
         Role role = new Role("USER");
         Set<Role> roles = new HashSet<>();
@@ -84,7 +99,7 @@ public class UserRepositoryTest {
         user.setPassword("password");
         user.setRoles(roles);
 
-        Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
+        Assertions.assertThrows(ConstraintViolationException.class, () -> {
             userRepository.save(user);
         });
 
@@ -92,6 +107,7 @@ public class UserRepositoryTest {
 
     @Test
     @DisplayName("Test when insert user without username")
+    @Order(3)
     public void saveUserTest3() {
         Role role = new Role("USER");
         Set<Role> roles = new HashSet<>();
@@ -102,13 +118,34 @@ public class UserRepositoryTest {
         user.setPassword("password");
         user.setRoles(roles);
 
-        Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
+        Assertions.assertThrows(ConstraintViolationException.class, () -> {
             userRepository.save(user);
         });
     }
 
     @Test
+    @DisplayName("Test when insert user without password")
+    @Order(4)
+    public void saveUserTest4() {
+        Role role = new Role("USER");
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+
+        User user = new User();
+        user.setEmail("test@gmail.com");
+        user.setUsername("user");
+        user.setRoles(roles);
+
+        Throwable exception = Assertions.assertThrows(ConstraintViolationException.class, () -> {
+            userRepository.save(user);
+        });
+
+    }
+
+
+    @Test
     @DisplayName("Test get user by user's ID")
+    @Order(5)
     public void getUserTest1() {
         int id = 1;
         User user = userRepository.findById(Long.valueOf(id)).orElse(null);
@@ -119,6 +156,8 @@ public class UserRepositoryTest {
         Assertions.assertTrue("test@gmail.com".equals(user.getEmail()));
         Assertions.assertTrue("user".equals(user.getUsername()));
         Assertions.assertTrue("password".equals(user.getPassword()));
+        Assert.isTrue(user.getStatus().equals(UserStatus.INACTIVE));
+
         Assertions.assertNotNull(roles);
         Assertions.assertTrue(roles.size() > 0);
         Assertions.assertTrue(roles.stream()
@@ -129,19 +168,20 @@ public class UserRepositoryTest {
 
     @Test
     @DisplayName("Test get user with ID not exist")
+    @Order(6)
     public void getUserTest2() {
         int id = 10;
         User user = userRepository.findById(Long.valueOf(id)).orElse(null);
 
         Assertions.assertNull(user);
-
     }
 
     @Test
     @DisplayName("Test get user with username")
+    @Order(7)
     public void getUserTest3() {
         String username = "user";
-        User user = userRepository.findByUsername("user").orElse(null);
+        User user = userRepository.findByUsername(username).orElse(null);
         Set<Role> roles = user.getRoles();
 
         Assertions.assertNotNull(user);
@@ -149,34 +189,187 @@ public class UserRepositoryTest {
         Assertions.assertTrue("test@gmail.com".equals(user.getEmail()));
         Assertions.assertTrue("user".equals(user.getUsername()));
         Assertions.assertTrue("password".equals(user.getPassword()));
+        Assert.isTrue(user.getStatus().equals(UserStatus.INACTIVE));
         Assertions.assertNotNull(roles);
         Assertions.assertTrue(roles.size() > 0);
         Assertions.assertTrue(roles.stream()
                 .filter(r -> "USER".equals(r.getName()))
                 .collect(Collectors.toList())
                 .size() > 0);
+    }
+
+    @Test
+    @DisplayName("Test get user with username not existed")
+    @Order(8)
+    public void getUserTest4() {
+        String username = "userabc";
+        User user = userRepository.findByUsername(username).orElse(null);
+        Assertions.assertNull(user);
+    }
+
+    @Test
+    @DisplayName("Test get user with email")
+    @Order(9)
+    public void getUserTest5() {
+        String email = "test@gmail.com";
+        User user = userRepository.findByEmail(email).orElse(null);
+        Set<Role> roles = user.getRoles();
+
+        Assertions.assertNotNull(user);
+        Assertions.assertTrue(user.getId() == 1);
+        Assertions.assertTrue("test@gmail.com".equals(user.getEmail()));
+        Assertions.assertTrue("user".equals(user.getUsername()));
+        Assertions.assertTrue("password".equals(user.getPassword()));
+        Assert.isTrue(user.getStatus().equals(UserStatus.INACTIVE));
+        Assertions.assertNotNull(roles);
+        Assertions.assertTrue(roles.size() > 0);
+        Assertions.assertTrue(roles.stream()
+                .filter(r -> "USER".equals(r.getName()))
+                .collect(Collectors.toList())
+                .size() > 0);
+    }
+
+    @Test
+    @DisplayName("Test get user with email or username")
+    @Order(10)
+    public void getUserTest6() {
+        String keyword = "user";
+        User user = userRepository.findByUsernameOrEmail(keyword, keyword).orElse(null);
+        Set<Role> roles = user.getRoles();
+
+        Assertions.assertNotNull(user);
+        Assertions.assertTrue(user.getId() == 1);
+        Assertions.assertTrue("test@gmail.com".equals(user.getEmail()));
+        Assertions.assertTrue("user".equals(user.getUsername()));
+        Assertions.assertTrue("password".equals(user.getPassword()));
+        Assert.isTrue(user.getStatus().equals(UserStatus.INACTIVE));
+
+        Assertions.assertNotNull(roles);
+        Assertions.assertTrue(roles.size() > 0);
+        Assertions.assertTrue(roles.stream()
+                .filter(r -> "USER".equals(r.getName()))
+                .collect(Collectors.toList())
+                .size() > 0);
+    }
+
+
+    @Test
+    @DisplayName("Test update user successfully")
+    @Order(11)
+    public void updateUserTest1() {
+        long id = 1;
+        User user = userRepository.findById(id).orElse(null);
+
+        user.setUsername("new_username");
+        user.setEmail("new_email");
+        user.setPassword("new_password");
+
+        userRepository.save(user);
+
+        User updatedUser = userRepository.findById(id).orElse(null);
+
+        Assertions.assertNotNull(updatedUser);
+        Assertions.assertEquals(id, updatedUser.getId());
+        Assertions.assertEquals("new_username", user.getUsername());
+        Assertions.assertEquals("new_email", user.getEmail());
+        Assertions.assertEquals("new_password", user.getPassword());
+        Assertions.assertEquals(user.getStatus(), updatedUser.getStatus());
+        Assertions.assertEquals(user.getRoles().size(), updatedUser.getRoles().size());
+        Assertions.assertEquals(
+                user.getRoles().stream().findAny().get().getName(),
+                updatedUser.getRoles().stream().findAny().get().getName()
+        );
+    }
+
+    @Test
+    @DisplayName("Test update user without password")
+    @Order(12)
+    public void updateUserTest3() {
+        long id = 1;
+        User user = userRepository.findById(id).orElse(null);
+
+        user.setUsername("new_username");
+        user.setEmail("new_email");
+        user.setPassword(null);
+
+        Assertions.assertThrows(ConstraintViolationException.class, () -> {
+            userRepository.saveAndFlush(user);
+        });
+    }
+
+    @Test
+    @DisplayName("Test delete user(existed user)")
+    @Order(13)
+    public void deleteUserTest1() {
+        long id = 1;
+        userRepository.deleteById(id);
+
+        User userAfterDeteted = userRepository.findById(id).orElse(null);
+        Assertions.assertNull(userAfterDeteted);
+        Assertions.assertEquals(0, userRepository.findAll().size());
+    }
+
+
+    @Test
+    @DisplayName("Test delete user(unexisted user)")
+    @Order(14)
+    public void deleteUserTest2() {
+        long id = 10;
+
+        Throwable exception = Assertions.assertThrows(Exception.class, () -> {
+            userRepository.deleteById(id);
+        });
+
+        Assertions
+                .assertTrue(
+                        exception
+                                .getMessage()
+                                .contains("No class com.packandgo.tripdiary.model.User entity with id " +  id +  " exists!"));
+
+        Assertions.assertEquals(1, userRepository.findAll().size());
 
     }
 
 
-//    @Test
-//    public void updateUserTest1() {
-//
-//    }
-//
-//    @Test
-//    public void updateUserTest2() {
-//
-//    }
-//
-//    @Test
-//    public void getUserByIdTest1() {
-//
-//    }
-//
-//    @Test
-//    public void getUserByIdTest2(){
-//
-//    }
+    @Test
+    @DisplayName("Test get all users")
+    @Order(15)
+    public void getAllUsersTest() {
 
+        Role role = new Role("ADMIN");
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+
+
+        User newUser = new User();
+        newUser.setUsername("new_user");
+        newUser.setEmail("new_test@gmail.com");
+        newUser.setPassword("new_password");
+        newUser.setRoles(roles);
+
+
+        userRepository.save(newUser);
+
+        List<User> users = userRepository.findAll();
+        Assertions.assertEquals(2, users.size());
+
+        User user0 = users.get(0);
+        Assertions.assertEquals(1, user0.getId());
+        Assertions.assertEquals("user", user0.getUsername());
+        Assertions.assertEquals("test@gmail.com", user0.getEmail());
+        Assertions.assertEquals("password", user0.getPassword());
+
+        Assertions.assertEquals(1, user0.getRoles().size());
+        Assertions.assertEquals("USER", user0.getRoles().stream().findFirst().get().getName());
+
+        User user1 = users.get(1);
+        Assertions.assertEquals(2, user1.getId());
+        Assertions.assertEquals("new_user", user1.getUsername());
+        Assertions.assertEquals("new_test@gmail.com", user1.getEmail());
+        Assertions.assertEquals("new_password", user1.getPassword());
+
+        Assertions.assertEquals(1, user1.getRoles().size());
+        Assertions.assertEquals("ADMIN", user1.getRoles().stream().findFirst().get().getName());
+
+    }
 }
