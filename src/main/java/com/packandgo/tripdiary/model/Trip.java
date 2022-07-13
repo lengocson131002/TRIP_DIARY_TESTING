@@ -26,6 +26,7 @@ public class Trip {
     private Long id;
 
     @Column(nullable = false)
+    @NotNull
     private String name;
 
     @Column(name = "thumbnail_url")

@@ -1,11 +1,14 @@
 package com.packandgo.tripdiary.test.user;
 
 import com.packandgo.tripdiary.enums.TripStatus;
+import com.packandgo.tripdiary.enums.UserStatus;
 import com.packandgo.tripdiary.model.Destination;
 import com.packandgo.tripdiary.model.Role;
 import com.packandgo.tripdiary.model.Trip;
 import com.packandgo.tripdiary.model.User;
+import com.packandgo.tripdiary.repository.RoleRepository;
 import com.packandgo.tripdiary.repository.TripRepository;
+import com.packandgo.tripdiary.repository.UserRepository;
 import io.jsonwebtoken.lang.Assert;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +31,25 @@ public class TripRepositoryTest {
     @Autowired
     private TripRepository tripRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Test
+    @Order(0)
+    @DisplayName("Test all repositories are not null")
+    public void testRepository() {
+        Assertions.assertNotNull(tripRepository);
+        Assertions.assertNotNull(userRepository);
+        Assertions.assertNotNull(roleRepository);
+    }
+
     @Test
     @DisplayName("Test insert user successfully")
     @Rollback(false)
-    @Order(0)
+    @Order(1)
     public void saveTripTest1() {
         Trip trip = new Trip();
         trip.setName("Trip to HCM city");
@@ -58,7 +76,7 @@ public class TripRepositoryTest {
 
     @Test
     @DisplayName("Test insert trip without name")
-    @Order(1)
+    @Order(2)
     public void saveTripTest2() {
         Trip trip = new Trip();
 
@@ -75,14 +93,14 @@ public class TripRepositoryTest {
         trip.setStatus(TripStatus.PUBLIC);
         trip.setConcurrencyUnit("VND");
 
-        Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
+        Assertions.assertThrows(ConstraintViolationException.class, () -> {
             tripRepository.save(trip);
         });
 
     }
     @Test
-    @DisplayName("Test when insert trip without destination")
-    @Order(2)
+    @DisplayName("Test insert trip without destination")
+    @Order(3)
     public void saveTripTest3() {
         Trip newTrip = new Trip();
         newTrip.setName("Trip test");
@@ -96,9 +114,23 @@ public class TripRepositoryTest {
     }
 
     @Test
-    @DisplayName("Test when insert trip with specify id")
-    @Order(3)
+    @DisplayName("Test insert trip without Description")
+    @Order(4)
     public void saveTripTest4() {
+        Trip newTrip = new Trip();
+        newTrip.setName("Trip test");
+        newTrip.setThumbnailUrl("/trip");
+        newTrip.setStatus(TripStatus.PUBLIC);
+
+        Assertions.assertThrows(ConstraintViolationException.class, () -> {
+            tripRepository.save(newTrip);
+        });
+    }
+
+    @Test
+    @DisplayName("Test insert trip with specify id")
+    @Order(5)
+    public void saveTripTest5() {
         Destination destination = new Destination();
         destination.setAddress("adress");
         destination.setLatitude(300000.2);
@@ -127,10 +159,9 @@ public class TripRepositoryTest {
         tripRepository.deleteAll();
     }
 
-
     @Test
     @DisplayName("Test get all trips")
-    @Order(4)
+    @Order(6)
     public void getAllTripTest() {
 
         Trip newtrip = new Trip();
@@ -163,8 +194,134 @@ public class TripRepositoryTest {
     }
 
     @Test
+    @DisplayName("Test get trip by trip's ID")
+    @Order(7)
+    public void getTripTest1() {
+        int id = 1;
+        Trip trip = tripRepository.findById(Long.valueOf(id)).orElse(null);
+
+        Assertions.assertNotNull(trip);
+        Assertions.assertTrue(trip.getId() == id);
+        Assertions.assertTrue("Trip to HCM city".equals(trip.getName()));
+        Assertions.assertEquals(2,trip.getNotifyBefore());
+        Assertions.assertTrue("VND".equals(trip.getConcurrencyUnit()));
+        Assert.isTrue(trip.getStatus().equals(TripStatus.PUBLIC));
+
+    }
+
+    @Test
+    @DisplayName("Test get trip with ID not exist")
+    @Order(8)
+    public void getTripTest2() {
+        int id = 10;
+        Trip trip = tripRepository.findById(Long.valueOf(id)).orElse(null);
+
+        Assertions.assertNull(trip);
+    }
+
+    @Test
+    @DisplayName("Test update trip successfully")
+    @Order(9)
+    public void updateTripTest1(){
+        long id = 1;
+        Trip trip = tripRepository.findById(id).orElse(null);
+        trip.setName("Trip to HN");
+        Destination destination = new Destination();
+        destination.setAddress("HN city");
+        destination.setLatitude(20);
+        destination.setLongitude(30);
+
+        trip.setDestination(destination);
+
+        trip.setNotifyBefore(5);
+        trip.setStatus(TripStatus.PUBLIC);
+        trip.setConcurrencyUnit("USD");
+        tripRepository.save(trip);
+        Trip updatedTrip = tripRepository.findById(id).orElse(null);
+        Assertions.assertNotNull(updatedTrip);
+        Assertions.assertEquals(id, updatedTrip.getId());
+        Assertions.assertEquals("Trip to HN", updatedTrip.getName());
+        Assertions.assertEquals(updatedTrip.getDestination(),trip.getDestination());
+        Assertions.assertEquals(5, updatedTrip.getNotifyBefore());
+        Assertions.assertEquals("USD", updatedTrip.getConcurrencyUnit());
+        Assertions.assertEquals(trip.getStatus(), updatedTrip.getStatus());
+    }
+
+    @Test
+    @DisplayName("Test update trip without name")
+    @Order(10)
+    public void updateTripTest2() {
+        long id = 1;
+        Trip trip = tripRepository.findById(id).orElse(null);
+
+        trip.setName(null);
+        Destination destination = new Destination();
+        destination.setAddress("HN city");
+        destination.setLatitude(20);
+        destination.setLongitude(30);
+
+        trip.setDestination(destination);
+
+        trip.setNotifyBefore(5);
+        trip.setStatus(TripStatus.PUBLIC);
+        trip.setConcurrencyUnit("USD");
+
+        Assertions.assertThrows(ConstraintViolationException.class, () -> {
+            tripRepository.saveAndFlush(trip);
+        });
+    }
+
+    @Test
+    @DisplayName("Test update trip without destination")
+    @Order(11)
+    public void updateTripTest3() {
+        long id = 1;
+        Trip trip = tripRepository.findById(id).orElse(null);
+
+        trip.setName(null);
+        Destination destination = new Destination();
+        destination.setAddress(null);
+        destination.setLatitude(20);
+        destination.setLongitude(30);
+
+        trip.setDestination(null);
+
+        trip.setNotifyBefore(5);
+        trip.setStatus(TripStatus.PUBLIC);
+        trip.setConcurrencyUnit("USD");
+
+        Assertions.assertThrows(ConstraintViolationException.class, () -> {
+            tripRepository.saveAndFlush(trip);
+        });
+    }
+
+    @Test
+    @DisplayName("Test update trip without ConcurrencyUnit")
+    @Order(12)
+    public void updateTripTest4() {
+        long id = 1;
+        Trip trip = tripRepository.findById(id).orElse(null);
+
+        trip.setName(null);
+        Destination destination = new Destination();
+        destination.setAddress("HN city");
+        destination.setLatitude(20);
+        destination.setLongitude(30);
+
+        trip.setDestination(destination);
+
+        trip.setNotifyBefore(5);
+        trip.setStatus(TripStatus.PUBLIC);
+        trip.setConcurrencyUnit(null);
+
+        Assertions.assertThrows(ConstraintViolationException.class, () -> {
+            tripRepository.saveAndFlush(trip);
+        });
+    }
+
+    @Test
     @DisplayName("Test when delete trip with the id is not exist")
-    @Order(5)
+    @Order(13)
     public void deleteTripTest1() {
         Assertions.assertThrows(EmptyResultDataAccessException.class, () -> {
             tripRepository.deleteById(Long.valueOf(10000));
@@ -173,7 +330,7 @@ public class TripRepositoryTest {
 
     @Test
     @DisplayName("Test when delete trip successfully")
-    @Order(6)
+    @Order(14)
     public void deleteTripTest2() {
         Destination destination = new Destination();
         destination.setAddress("adress");
@@ -199,7 +356,7 @@ public class TripRepositoryTest {
 
     @Test
     @DisplayName("Test when delete trip with the id is null")
-    @Order(7)
+    @Order(15)
     public void deleteTripTest3() {
         Assertions.assertThrows(InvalidDataAccessApiUsageException.class, () -> {
             tripRepository.deleteById(null);
