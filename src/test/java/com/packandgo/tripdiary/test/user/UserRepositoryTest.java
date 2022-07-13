@@ -53,7 +53,7 @@ public class UserRepositoryTest {
     @DisplayName("Test insert user successfully")
     @Rollback(false)
     @Order(1)
-    public void saveUserTest1() {
+    public void userTest1_saveUserTest1() {
 
         Role role = new Role("USER");
         Set<Role> roles = new HashSet<>();
@@ -88,7 +88,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test when insert user without email")
     @Order(2)
-    public void saveUserTest2() {
+    public void userTest2_saveUserTest2() {
         Role role = new Role("USER");
         Set<Role> roles = new HashSet<>();
         roles.add(role);
@@ -108,7 +108,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test when insert user without username")
     @Order(3)
-    public void saveUserTest3() {
+    public void userTest3_saveUserTest3() {
         Role role = new Role("USER");
         Set<Role> roles = new HashSet<>();
         roles.add(role);
@@ -126,7 +126,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test when insert user without password")
     @Order(4)
-    public void saveUserTest4() {
+    public void userTest4_saveUserTest4() {
         Role role = new Role("USER");
         Set<Role> roles = new HashSet<>();
         roles.add(role);
@@ -146,7 +146,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test get user by user's ID")
     @Order(5)
-    public void getUserTest1() {
+    public void userTest5_getUserTest1() {
         int id = 1;
         User user = userRepository.findById(Long.valueOf(id)).orElse(null);
         Set<Role> roles = user.getRoles();
@@ -169,7 +169,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test get user with ID not exist")
     @Order(6)
-    public void getUserTest2() {
+    public void userTest6_getUserTest2() {
         int id = 10;
         User user = userRepository.findById(Long.valueOf(id)).orElse(null);
 
@@ -179,7 +179,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test get user with username")
     @Order(7)
-    public void getUserTest3() {
+    public void userTest7_getUserTest3() {
         String username = "user";
         User user = userRepository.findByUsername(username).orElse(null);
         Set<Role> roles = user.getRoles();
@@ -201,7 +201,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test get user with username not existed")
     @Order(8)
-    public void getUserTest4() {
+    public void userTest8_getUserTest4() {
         String username = "userabc";
         User user = userRepository.findByUsername(username).orElse(null);
         Assertions.assertNull(user);
@@ -210,7 +210,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test get user with email")
     @Order(9)
-    public void getUserTest5() {
+    public void userTest9_getUserTest5() {
         String email = "test@gmail.com";
         User user = userRepository.findByEmail(email).orElse(null);
         Set<Role> roles = user.getRoles();
@@ -232,7 +232,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test get user with email or username")
     @Order(10)
-    public void getUserTest6() {
+    public void userTest10_getUserTest6() {
         String keyword = "user";
         User user = userRepository.findByUsernameOrEmail(keyword, keyword).orElse(null);
         Set<Role> roles = user.getRoles();
@@ -256,7 +256,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test update user successfully")
     @Order(11)
-    public void updateUserTest1() {
+    public void userTest11_updateUserTest1() {
         long id = 1;
         User user = userRepository.findById(id).orElse(null);
 
@@ -284,7 +284,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test update user without password")
     @Order(12)
-    public void updateUserTest3() {
+    public void userTest12_updateUserTest3() {
         long id = 1;
         User user = userRepository.findById(id).orElse(null);
 
@@ -300,7 +300,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test delete user(existed user)")
     @Order(13)
-    public void deleteUserTest1() {
+    public void userTest13_deleteUserTest1() {
         long id = 1;
         userRepository.deleteById(id);
 
@@ -313,7 +313,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test delete user(unexisted user)")
     @Order(14)
-    public void deleteUserTest2() {
+    public void userTest14_deleteUserTest2() {
         long id = 10;
 
         Throwable exception = Assertions.assertThrows(Exception.class, () -> {
@@ -334,7 +334,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("Test get all users")
     @Order(15)
-    public void getAllUsersTest() {
+    public void userTest15_getAllUsersTest() {
 
         Role role = new Role("ADMIN");
         Set<Role> roles = new HashSet<>();

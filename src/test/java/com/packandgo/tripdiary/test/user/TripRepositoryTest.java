@@ -50,7 +50,7 @@ public class TripRepositoryTest {
     @DisplayName("Test insert user successfully")
     @Rollback(false)
     @Order(1)
-    public void saveTripTest1() {
+    public void tripTest1_saveTripTest1() {
         Trip trip = new Trip();
         trip.setName("Trip to HCM city");
 
@@ -77,7 +77,7 @@ public class TripRepositoryTest {
     @Test
     @DisplayName("Test insert trip without name")
     @Order(2)
-    public void saveTripTest2() {
+    public void tripTest2_saveTripTest2() {
         Trip trip = new Trip();
 
         Destination destination = new Destination();
@@ -101,7 +101,7 @@ public class TripRepositoryTest {
     @Test
     @DisplayName("Test insert trip without destination")
     @Order(3)
-    public void saveTripTest3() {
+    public void tripTest3_saveTripTest3() {
         Trip newTrip = new Trip();
         newTrip.setName("Trip test");
         newTrip.setThumbnailUrl("/trip");
@@ -116,7 +116,7 @@ public class TripRepositoryTest {
     @Test
     @DisplayName("Test insert trip without Description")
     @Order(4)
-    public void saveTripTest4() {
+    public void tripTest4_saveTripTest4() {
         Trip newTrip = new Trip();
         newTrip.setName("Trip test");
         newTrip.setThumbnailUrl("/trip");
@@ -130,9 +130,9 @@ public class TripRepositoryTest {
     @Test
     @DisplayName("Test insert trip with specify id")
     @Order(5)
-    public void saveTripTest5() {
+    public void tripTest5_saveTripTest5() {
         Destination destination = new Destination();
-        destination.setAddress("adress");
+        destination.setAddress("address");
         destination.setLatitude(300000.2);
         destination.setLongitude(2308.89989);
 
@@ -162,7 +162,7 @@ public class TripRepositoryTest {
     @Test
     @DisplayName("Test get all trips")
     @Order(6)
-    public void getAllTripTest() {
+    public void tripTest6_getAllTripTest() {
 
         Trip newtrip = new Trip();
         newtrip.setName("Trip to HN city");
@@ -196,7 +196,7 @@ public class TripRepositoryTest {
     @Test
     @DisplayName("Test get trip by trip's ID")
     @Order(7)
-    public void getTripTest1() {
+    public void tripTest7_getTripTest1() {
         int id = 1;
         Trip trip = tripRepository.findById(Long.valueOf(id)).orElse(null);
 
@@ -212,7 +212,7 @@ public class TripRepositoryTest {
     @Test
     @DisplayName("Test get trip with ID not exist")
     @Order(8)
-    public void getTripTest2() {
+    public void tripTest8_getTripTest2() {
         int id = 10;
         Trip trip = tripRepository.findById(Long.valueOf(id)).orElse(null);
 
@@ -250,7 +250,7 @@ public class TripRepositoryTest {
     @Test
     @DisplayName("Test update trip without name")
     @Order(10)
-    public void updateTripTest2() {
+    public void tripTest10_updateTripTest2() {
         long id = 1;
         Trip trip = tripRepository.findById(id).orElse(null);
 
@@ -274,7 +274,7 @@ public class TripRepositoryTest {
     @Test
     @DisplayName("Test update trip without destination")
     @Order(11)
-    public void updateTripTest3() {
+    public void tripTest11_updateTripTest3() {
         long id = 1;
         Trip trip = tripRepository.findById(id).orElse(null);
 
@@ -298,7 +298,7 @@ public class TripRepositoryTest {
     @Test
     @DisplayName("Test update trip without ConcurrencyUnit")
     @Order(12)
-    public void updateTripTest4() {
+    public void tripTest12_updateTripTest4() {
         long id = 1;
         Trip trip = tripRepository.findById(id).orElse(null);
 
@@ -322,7 +322,7 @@ public class TripRepositoryTest {
     @Test
     @DisplayName("Test when delete trip with the id is not exist")
     @Order(13)
-    public void deleteTripTest1() {
+    public void tripTest13_deleteTripTest1() {
         Assertions.assertThrows(EmptyResultDataAccessException.class, () -> {
             tripRepository.deleteById(Long.valueOf(10000));
         });
@@ -331,7 +331,7 @@ public class TripRepositoryTest {
     @Test
     @DisplayName("Test when delete trip successfully")
     @Order(14)
-    public void deleteTripTest2() {
+    public void tripTest14_deleteTripTest2() {
         Destination destination = new Destination();
         destination.setAddress("adress");
         destination.setLatitude(300000.2);
@@ -357,7 +357,7 @@ public class TripRepositoryTest {
     @Test
     @DisplayName("Test when delete trip with the id is null")
     @Order(15)
-    public void deleteTripTest3() {
+    public void tripTest15_deleteTripTest3() {
         Assertions.assertThrows(InvalidDataAccessApiUsageException.class, () -> {
             tripRepository.deleteById(null);
         });
